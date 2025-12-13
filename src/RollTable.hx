@@ -60,7 +60,7 @@ class RollTable {
 				3;
 			} else if (r >= dc) {
 				2;
-			} else if (r >= dc - 10) {
+			} else if (r > dc - 10) {
 				1;
 			} else {
 				0;

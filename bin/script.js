@@ -61,7 +61,7 @@ RollTable.prototype = {
 		while(_g < 21) {
 			var i = _g++;
 			var r = i + bonus;
-			var stage = r >= dc + 10 ? 3 : r >= dc ? 2 : r >= dc - 10 ? 1 : 0;
+			var stage = r >= dc + 10 ? 3 : r >= dc ? 2 : r > dc - 10 ? 1 : 0;
 			if(i == 20 && stage < 3) {
 				++stage;
 			}
