@@ -1,0 +1,4 @@
+--class-path src
+--main Main
+--js bin/script.js
+--dce full

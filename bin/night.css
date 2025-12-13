@@ -1,0 +1,42 @@
+#night {
+	display: none;
+}
+label[for="night"] {
+	float: right;
+	position: relative;
+	z-index: 100;
+	border: 1px solid #007bff;
+	padding: 0 0.3em;
+}
+label[for="night"]:hover {
+	background: #007bff40;
+}
+#night:not(:checked) + label:after {
+	content: "Light mode";
+}
+#night:checked + label:after {
+	content: "Dark mode";
+}
+
+body.night {
+    background-color: #405070;
+    color: white;
+}
+body.night main {
+    background: #1A202D;
+}
+body.night main fieldset {
+    border-color: #516285;
+}
+body.night main input[type="number"],
+body.night main select {
+    background: #0d1016;
+    color: white;
+    border: 1px solid #516285;
+}
+body.night a {
+    color: #9DEC76;
+}
+body.night a:visited {
+    color: #7ef0ff;
+}

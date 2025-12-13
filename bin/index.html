@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html><head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width" />
+	<title>YAL's PF2e roll result visualizer</title>
+	<link rel="stylesheet" href="style.css"/>
+	<link rel="stylesheet" href="night.css"/>
+	<script defer="" src="https://cloud.umami.is/script.js" data-website-id="5e27083a-c054-4136-9592-b43ac60a5e84"></script>
+</head><body>
+	<main>
+		<input id="night" type="checkbox"/>
+		<label for="night"></label>
+		<h1>
+			<abbr title="YellowAfterlife">YAL</abbr>'s
+			<abbr title="Pathfinder 2nd edition">PF2e</abbr>
+			roll result visualizer
+		</h1>
+		<script>(function() {
+			var key = "roll-result-vis-night";
+			var cb = document.getElementById("night");
+			var value = null;
+			try {
+				value = localStorage.getItem(key) == "1";
+			} catch (_) {}
+			if (value == null) {
+				value = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			}
+			function sync() {
+				if (cb.checked) document.body.classList.add("night"); else document.body.classList.remove("night");
+			}
+			cb.checked = value;
+			cb.onchange = function() {
+				sync();
+				try {
+					localStorage.setItem(key, cb.checked ? "1" : "0");
+				} catch (_) {}
+			};
+			sync();
+		})()</script>
+		
+		<div class="table" id="in-main">
+			<div>
+				<input id="in-bonus" type="number" value="14"/>
+			</div><div>
+				Bonus
+			</div>
+			<div>
+				<input id="in-attempts" type="number" value="1"/>
+			</div><div>
+				Attempts
+			</div>
+			<div>
+				<input id="in-dc" type="number" value="19"/>
+			</div><div>
+				Difficulty Class
+			</div>
+			<div>
+				<input id="in-map" type="number" value="4"/>
+			</div><div>
+				<abbr title="Multiple attack penalty">MAP</abbr>
+			</div>
+		</div>
+		
+		<input id="in-use-efficiency" type="checkbox">
+		<label for="in-use-efficiency">
+			Calculate efficiency
+		</label>
+		
+		<div class="table" id="in-efficiency">
+			<div>
+				<select id="in-efficiency-presets">
+					<option value="0/0/100/200" selected>Strike</option>
+					<option value="-100/0/100/200">Shove</option>
+					<option value="-100/0/100/110">Trip</option>
+					<option value="0/50/100/200">Save</option>
+				</select>
+			</div><div>
+				Presets
+			</div>
+			<div></div><div></div>
+			<div>
+				<input id="in-efficiency-0" type="number" value="0"/>
+			</div><div>
+				Critical failure
+			</div>
+			<div>
+				<input id="in-efficiency-1" type="number" value="0"/>
+			</div><div>
+				Failure
+			</div>
+			<div>
+				<input id="in-efficiency-2" type="number" value="100"/>
+			</div><div>
+				Success
+			</div>
+			<div>
+				<input id="in-efficiency-3" type="number" value="200"/>
+			</div><div>
+				Critical success
+			</div>
+		</div>
+		
+		<div id="results"></div>
+		<div id="efficiency-result"></div>
+		
+		<fieldset>
+			<legend>About this tool</legend>
+			<p>
+				For the burning Pathfinder 2nd edition questions like
+				"does it make sense to grapple this enemy",
+				"how much does a +1 status bonus help",
+				or "should I attack with MAP?".
+			</p><p>
+				See <a href="https://2e.aonprd.com/Rules.aspx?ID=2278">AoN</a> for full rules.
+			</p><p>
+				A tool by <a href="https://yal.cc/">YellowAfterlife</a>, written in <a href="https://haxe.org">Haxe</a>.
+			</p>
+		</fieldset>
+		
+		<script src="script.js"></script>
+	</main>
+</body></html>

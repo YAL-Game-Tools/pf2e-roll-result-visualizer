@@ -1,0 +1,85 @@
+body {
+	font: 15px sans-serif;
+	line-height: 1.5;
+	background: #899FC6;
+}
+main {
+	max-width: 720px;
+	margin: 0 auto;
+	background: white;
+	padding: 10px;
+}
+
+main div.table {
+	display: grid;
+	grid-template-columns: 4em 1fr 4em 1fr;
+	grid-auto-flow: row;
+	column-gap: 0.25em;
+	row-gap: 0.25em;
+}
+main h1 {
+	margin: 0;
+	transform: skewX(-5deg);
+}
+main .table input, main .table select {
+	width: 100%;
+	box-sizing: border-box;
+}
+#in-use-efficiency:not(:checked) ~ #in-efficiency {
+	display: none;
+}
+#night:checked + main table input {
+	background: rgb(34, 34, 34);
+	color: white;
+	border: 1px solid rgb(137, 159, 198);
+}
+.results {
+	width: 100%;
+	box-sizing: border-box;
+}
+.results td {
+	text-align: center;
+	padding-left: 0;
+	padding-right: 0;
+	font-family: monospace, monospace;
+}
+.crit-success {
+	color: white;
+	background-color: #007bff;
+}
+.any-success {
+	color: #212529;
+	background-color: #6ae1ff;
+}
+.success {
+	color: white;
+	background-color: #28a745;
+}
+.failure {
+	color: #212529;
+	background-color: #ffc107;
+}
+.crit-failure {
+	color: white;
+	background-color: #dc3545;
+}
+.stages span[class] {
+	padding: 0.1em 0.3em;
+	border-radius: 0.2em;
+	display: inline-block;
+	margin-top: 0.3em;
+}
+main p {
+	margin: 0.25em 0;
+}
+main p:first-child, main legend + p {
+	margin-top: 0.15em;
+}
+main p:last-child {
+	margin-bottom: 0.15em;
+}
+@media only screen and (max-device-width: 480px) {
+	.results td {
+		font-size: 75%;
+	}
+}
