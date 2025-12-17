@@ -25,6 +25,9 @@ main .table input, main .table select {
 	width: 100%;
 	box-sizing: border-box;
 }
+fieldset.hide > *:not(legend) {
+	display: none;
+}
 #in-use-efficiency:not(:checked) ~ #in-efficiency {
 	display: none;
 }
@@ -42,6 +45,12 @@ main .table input, main .table select {
 	padding-left: 0;
 	padding-right: 0;
 	font-family: monospace, monospace;
+}
+.results.sure-strike tr.normal {
+	display: none;
+}
+.results:not(.sure-strike) tr.sure-strike {
+	display: none;
 }
 .crit-success {
 	color: white;

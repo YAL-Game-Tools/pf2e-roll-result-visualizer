@@ -17,6 +17,7 @@ class Main {
 	static var inEfficiency:Array<InputElement> = [
 		for (i in 0 ... 4) findInput("in-efficiency-" + i)
 	];
+	static var inSureStrike:InputElement = findInput("in-sure-strike");
 	static function findInput(id:String) {
 		var input:InputElement = cast document.getElementById(id);
 		input.addEventListener("change", () -> {
@@ -34,6 +35,7 @@ class Main {
 			[for (input in inEfficiency) input.valueAsNumber];
 		} else null;
 		//
+		var sureStrike = inSureStrike.checked;
 		var firstEfficiency = 0.;
 		var efficiencyTotal = 0.;
 		for (attempt in 0 ... attempts) {
@@ -42,7 +44,7 @@ class Main {
 				tables[attempt] = table = RollTable.create();
 			} else table.element.style.display = "";
 			
-			var efficiency = table.update(bonus, dc, efficiencies, firstEfficiency);
+			var efficiency = table.update(bonus, dc, efficiencies, firstEfficiency, sureStrike);
 			if (attempt == 0) firstEfficiency = efficiency;
 			efficiencyTotal += efficiency;
 			bonus -= map;

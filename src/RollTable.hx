@@ -1,3 +1,4 @@
+import js.html.TableRowElement;
 import js.html.DivElement;
 import js.Browser;
 import js.html.TableElement;
@@ -13,6 +14,9 @@ class RollTable {
 	public var legend:LegendElement;
 	public var table:TableElement;
 	public var dice:Array<TableCellElement> = [null];
+	public var dieRow:TableRowElement;
+	public var sureStrikeDice:Array<Array<TableCellElement>> = [];
+	public var sureStrikeRows:Array<TableRowElement> = [];
 	public var stages:Array<TableCellElement> = [];
 	public var footnotes:DivElement;
 	public static var stageClassNames = ["crit-failure", "failure", "success", "crit-success"];
@@ -22,8 +26,8 @@ class RollTable {
 		table = document.createTableElement();
 		table.classList.add("results");
 		
-		var dieRow = document.createTableRowElement();
-		dieRow.classList.add("dice");
+		dieRow = document.createTableRowElement();
+		dieRow.classList.add("dice", "normal");
 		for (i in 1 ... 21) {
 			var die = document.createTableCellElement();
 			die.width = "5%";
@@ -32,6 +36,20 @@ class RollTable {
 			dice.push(die);
 		}
 		table.append(dieRow);
+		
+		for (i in 1 ... 21) {
+			var sureStrikeDieRow = document.createTableRowElement();
+			sureStrikeDieRow.classList.add("dice", "sure-strike");
+			sureStrikeDice[i] = [null];
+			for (k in 1 ... 21) {
+				var die = document.createTableCellElement();
+				die.width = "5%";
+				die.innerHTML = k + "<br>" + i;
+				sureStrikeDieRow.append(die);
+				sureStrikeDice[i].push(die);
+			}
+			table.append(sureStrikeDieRow);
+		}
 		
 		var stageRow = document.createTableRowElement();
 		stageRow.classList.add("stages");
@@ -52,9 +70,9 @@ class RollTable {
 		document.getElementById("results").append(table.element);
 		return table;
 	}
-	public function update(bonus:Int, dc:Int, efficiencies:Array<Float>, firstEfficiency:Float) {
-		var chances = [0, 0, 0, 0];
-		for (i in 1 ... 21) {
+	public function update(bonus:Int, dc:Int, efficiencies:Array<Float>, firstEfficiency:Float, sureStrike:Bool) {
+		var chances:Array<Float> = [0, 0, 0, 0];
+		inline function getStage(i:Int) {
 			var r = i + bonus;
 			var stage = if (r >= dc + 10) {
 				3;
@@ -68,8 +86,24 @@ class RollTable {
 			// nat
 			if (i == 20 && stage < 3) stage++;
 			if (i == 1 && stage > 0) stage--;
-			chances[stage] += 5;
-			dice[i].className = stageClassNames[stage];
+			return stage;
+		}
+		if (sureStrike) {
+			table.classList.add("sure-strike");
+			for (i in 1 ... 21) {
+				for (k in 1 ... 21) {
+					var stage = getStage(i > k ? i : k);
+					chances[stage] += 100/20/20;
+					sureStrikeDice[k][i].className = stageClassNames[stage];
+				}
+			}
+		} else {
+			table.classList.remove("sure-strike");
+			for (i in 1 ... 21) {
+				var stage = getStage(i);
+				chances[stage] += 5;
+				dice[i].className = stageClassNames[stage];
+			}
 		}
 		//
 		var values = if (efficiencies != null) {
@@ -85,15 +119,16 @@ class RollTable {
 				var value = values != null ? values[i] : null;
 				var valueStr = value != null ? value.toFixed2() : null;
 				//
+				var chanceStr = chance + "%";
 				var text = chance + "%";
 				if (valueStr != null) text += '\n$valueStr';
 				//
-				if (chances[i] > 5 || valueStr == null || valueStr.length <= 2) {
+				if (chances[i] >= 10 || (valueStr == null || valueStr.length <= 2) && chanceStr.length <= 2) {
 					stageTD.innerText = text;
 					stageTD.removeAttribute("title");
 					stageTD.onclick = null;
 				} else {
-					var short = chance + "%";
+					var short = Math.round(chance) + "%";
 					if (valueStr != null) {
 						short += "\n";
 						if (value != 0) {

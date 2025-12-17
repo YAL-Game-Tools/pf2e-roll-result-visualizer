@@ -1,3 +1,4 @@
+import js.html.FieldSetElement;
 import js.html.Element;
 import js.Browser;
 
@@ -10,5 +11,15 @@ class HtmlTools {
 	}
 	public static inline function toFixed2(n:Float):String {
 		return "" + Math.round(n * 100) / 100;
+	}
+	public static function makeFieldSetToggleable(q:FieldSetElement) {
+		var legend = q.querySelector("& > legend");
+		legend.onclick = (e) -> {
+			if (q.classList.contains("hide")) {
+				q.classList.remove("hide");
+			} else {
+				q.classList.add("hide");
+			}
+		}
 	}
 }
