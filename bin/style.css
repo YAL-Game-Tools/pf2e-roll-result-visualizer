@@ -17,11 +17,14 @@ main div.table {
 	column-gap: 0.25em;
 	row-gap: 0.25em;
 }
+main .table .checkbox {
+	text-align: right;
+}
 main h1 {
 	margin: 0;
 	transform: skewX(-5deg);
 }
-main .table input,
+main .table input:not([type="checkbox"]),
 main .table select {
 	width: 100%;
 	box-sizing: border-box;

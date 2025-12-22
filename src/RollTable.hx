@@ -85,7 +85,7 @@ class RollTable {
 				0;
 			}
 			// nat
-			if (i == 20 && stage < 3) stage++;
+			if ((i == 20 || q.keenFlair && i == 19) && stage < 3) stage++;
 			if (i == 1 && stage > 0) stage--;
 			return stage;
 		}
@@ -123,6 +123,25 @@ class RollTable {
 			[for (i in 0 ... 4) chances[i] / 100 * q.efficiencies[i]];
 		} else null;
 		//
+		var colSpans = chances.map(chance -> {
+			if (chance < 0.01) return 0;
+			if (chance < 5) return 1;
+			return Math.round(chance / 5);
+		});
+		var colSpanSum = 0;
+		for (n in colSpans) colSpanSum += n;
+		if (colSpanSum != 20) {
+			var widestStage = 0;
+			var widestWidth = colSpans[0];
+			for (i => n in colSpans) {
+				if (n > widestWidth) {
+					widestWidth = n;
+					widestStage = i;
+				}
+			}
+			colSpans[widestStage] -= (colSpanSum - 20);
+		}
+		//
 		for (i in 0 ... 4) {
 			var chance = chances[i];
 			if (chance > 0) {
@@ -155,7 +174,7 @@ class RollTable {
 						Browser.window.alert(text);
 					};
 				}
-				stageTD.colSpan = Std.int(chance / 5);
+				stageTD.colSpan = colSpans[i];
 			} else {
 				stages[i].style.display = "none";
 			}

@@ -2,3 +2,4 @@
 --main Main
 --js bin/script.js
 --dce full
+--macro UpdatePHP.run()

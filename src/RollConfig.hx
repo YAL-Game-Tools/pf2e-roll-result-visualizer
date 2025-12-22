@@ -1,5 +1,6 @@
 class RollConfig {
 	public var sureStrike:SureStrike = Off;
+	public var keenFlair = false;
 	public var firstEfficiency = 0.0;
 	public var efficiencies:Array<Float> = null;
 	public function new() {

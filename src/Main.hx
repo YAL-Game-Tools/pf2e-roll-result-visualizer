@@ -14,11 +14,15 @@ class Main {
 	static var inDC:InputElement = findInput("in-dc");
 	static var inAttempts:InputElement = findInput("in-attempts");
 	static var inMAP:InputElement = findInput("in-map");
+	//
 	static var inUseEfficiency:InputElement = findInput("in-use-efficiency");
 	static var inEfficiency:Array<InputElement> = [
 		for (i in 0 ... 4) findInput("in-efficiency-" + i)
 	];
+	//
 	static var inSureStrike:SelectElement = findInput("in-sure-strike");
+	static var inKeenFlair:InputElement = findInput("in-keen-flair");
+	//
 	static function findInput<T:Element>(id:String, ?c:Class<T>):T {
 		var input:T = cast document.getElementById(id);
 		input.addEventListener("change", () -> {
@@ -42,6 +46,7 @@ class Main {
 		q.efficiencies = if (inUseEfficiency.checked) {
 			[for (input in inEfficiency) input.valueAsNumber];
 		} else null;
+		q.keenFlair = inKeenFlair.checked;
 		//
 		var firstEfficiency = 0.;
 		var efficiencyTotal = 0.;
