@@ -1,5 +1,6 @@
 package;
 
+import js.html.Element;
 import js.html.SelectElement;
 import js.html.Console;
 import js.Browser;
@@ -17,9 +18,9 @@ class Main {
 	static var inEfficiency:Array<InputElement> = [
 		for (i in 0 ... 4) findInput("in-efficiency-" + i)
 	];
-	static var inSureStrike:InputElement = findInput("in-sure-strike");
-	static function findInput(id:String) {
-		var input:InputElement = cast document.getElementById(id);
+	static var inSureStrike:SelectElement = findInput("in-sure-strike");
+	static function findInput<T:Element>(id:String, ?c:Class<T>):T {
+		var input:T = cast document.getElementById(id);
 		input.addEventListener("change", () -> {
 			update();
 		});
@@ -31,11 +32,17 @@ class Main {
 		var attempts = Std.parseInt(inAttempts.value);
 		if (attempts < 1) attempts = 1;
 		var map = Std.parseInt(inMAP.value);
-		var efficiencies = if (inUseEfficiency.checked) {
+		//
+		var q = new RollConfig();
+		q.sureStrike = switch (inSureStrike.value) {
+			case "1": On;
+			case "g": Grid;
+			default: Off;
+		}
+		q.efficiencies = if (inUseEfficiency.checked) {
 			[for (input in inEfficiency) input.valueAsNumber];
 		} else null;
 		//
-		var sureStrike = inSureStrike.checked;
 		var firstEfficiency = 0.;
 		var efficiencyTotal = 0.;
 		for (attempt in 0 ... attempts) {
@@ -44,8 +51,8 @@ class Main {
 				tables[attempt] = table = RollTable.create();
 			} else table.element.style.display = "";
 			
-			var efficiency = table.update(bonus, dc, efficiencies, firstEfficiency, sureStrike);
-			if (attempt == 0) firstEfficiency = efficiency;
+			var efficiency = table.update(bonus, dc, q);
+			if (attempt == 0) q.firstEfficiency = efficiency;
 			efficiencyTotal += efficiency;
 			bonus -= map;
 		}
@@ -55,12 +62,15 @@ class Main {
 		}
 		//
 		var efficiencyResult = document.getElementById("efficiency-result");
-		if (efficiencies != null) {
+		if (q.efficiencies != null) {
 			efficiencyResult.innerText = "Efficiency total: " + efficiencyTotal.toFixed2();
 		} else efficiencyResult.innerText = "";
 	}
 	public static function main() {
 		Console.log("Hello!");
+		for (fieldset in document.querySelectorAll("fieldset")) {
+			HtmlTools.makeFieldSetToggleable(cast fieldset);
+		}
 		var efficiencyPresets:SelectElement = cast document.getElementById("in-efficiency-presets");
 		efficiencyPresets.addEventListener("change", () -> {
 			var value = efficiencyPresets.value;

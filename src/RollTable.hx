@@ -64,13 +64,14 @@ class RollTable {
 		footnotes = document.createDivElement();
 		
 		element.append(legend, table, footnotes);
+		element.makeFieldSetToggleable();
 	}
 	public static function create() {
 		var table = new RollTable();
 		document.getElementById("results").append(table.element);
 		return table;
 	}
-	public function update(bonus:Int, dc:Int, efficiencies:Array<Float>, firstEfficiency:Float, sureStrike:Bool) {
+	public function update(bonus:Int, dc:Int, q:RollConfig) {
 		var chances:Array<Float> = [0, 0, 0, 0];
 		inline function getStage(i:Int) {
 			var r = i + bonus;
@@ -88,7 +89,7 @@ class RollTable {
 			if (i == 1 && stage > 0) stage--;
 			return stage;
 		}
-		if (sureStrike) {
+		if (q.sureStrike == Grid) {
 			table.classList.add("sure-strike");
 			for (i in 1 ... 21) {
 				for (k in 1 ... 21) {
@@ -99,15 +100,27 @@ class RollTable {
 			}
 		} else {
 			table.classList.remove("sure-strike");
-			for (i in 1 ... 21) {
-				var stage = getStage(i);
-				chances[stage] += 5;
-				dice[i].className = stageClassNames[stage];
+			if (q.sureStrike == On) {
+				for (i in 1 ... 21) {
+					for (k in 1 ... 21) {
+						var stage = getStage(i > k ? i : k);
+						chances[stage] += 100/20/20;
+						sureStrikeDice[k][i].className = stageClassNames[stage];
+					}
+					var stage = getStage(i);
+					dice[i].className = stageClassNames[stage];
+				}
+			} else {
+				for (i in 1 ... 21) {
+					var stage = getStage(i);
+					chances[stage] += 5;
+					dice[i].className = stageClassNames[stage];
+				}
 			}
 		}
 		//
-		var values = if (efficiencies != null) {
-			[for (i in 0 ... 4) chances[i] / 100 * efficiencies[i]];
+		var values = if (q.efficiencies != null) {
+			[for (i in 0 ... 4) chances[i] / 100 * q.efficiencies[i]];
 		} else null;
 		//
 		for (i in 0 ... 4) {
@@ -129,6 +142,7 @@ class RollTable {
 					stageTD.onclick = null;
 				} else {
 					var short = Math.round(chance) + "%";
+					if (short == "0%" && chance > 0) short = "1%";
 					if (valueStr != null) {
 						short += "\n";
 						if (value != 0) {
@@ -152,9 +166,9 @@ class RollTable {
 			title += ' (+$bonus)';
 		} else title += ' ($bonus)';
 		var total = 0.;
-		if (efficiencies != null) {
+		if (q.efficiencies != null) {
 			for (i in 0 ... 4) {
-				total += chances[i] / 100 * efficiencies[i];
+				total += chances[i] / 100 * q.efficiencies[i];
 			}
 		}
 		legend.innerText = title;
@@ -163,10 +177,10 @@ class RollTable {
 			'Any success: ${chances[2] + chances[3]}%',
 			'any failure: ${chances[0] + chances[1]}%',
 		];
-		if (efficiencies != null) {
+		if (q.efficiencies != null) {
 			var efficiencyNote = 'efficiency: $total';
-			if (firstEfficiency != 0) {
-				var factor = (total / firstEfficiency * 100).toFixed1();
+			if (q.firstEfficiency != 0) {
+				var factor = (total / q.firstEfficiency * 100).toFixed1();
 				efficiencyNote += ' ($factor%)';
 			}
 			notes.push(efficiencyNote);
