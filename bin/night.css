@@ -29,6 +29,7 @@ body.night main fieldset {
     border-color: #516285;
 }
 body.night main input[type="number"],
+body.night main input[type="text"],
 body.night main select {
     background: #0d1016;
     color: white;

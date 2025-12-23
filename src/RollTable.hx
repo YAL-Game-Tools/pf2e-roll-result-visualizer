@@ -1,3 +1,4 @@
+import haxe.ds.Vector;
 import js.html.TableRowElement;
 import js.html.DivElement;
 import js.Browser;
@@ -19,7 +20,15 @@ class RollTable {
 	public var sureStrikeRows:Array<TableRowElement> = [];
 	public var stages:Array<TableCellElement> = [];
 	public var footnotes:DivElement;
-	public static var stageClassNames = ["crit-failure", "failure", "success", "crit-success"];
+	public static var stageClassNames = {
+		var names = new StageArray("");
+		names[FlatFailure] = "flat-failure";
+		names[CritFailure] = "crit-failure";
+		names[Failure] = "failure";
+		names[Success] = "success";
+		names[CritSuccess] = "crit-success";
+		names;
+	};
 	public function new() {
 		element = document.createFieldSetElement();
 		legend = document.createLegendElement();
@@ -53,7 +62,7 @@ class RollTable {
 		
 		var stageRow = document.createTableRowElement();
 		stageRow.classList.add("stages");
-		for (i in 0 ... 4) {
+		for (i in 0 ... Stage.Count) {
 			var stage = document.createTableCellElement();
 			stage.className = stageClassNames[i];
 			stageRow.append(stage);
@@ -72,21 +81,21 @@ class RollTable {
 		return table;
 	}
 	public function update(bonus:Int, dc:Int, q:RollConfig) {
-		var chances:Array<Float> = [0, 0, 0, 0];
-		inline function getStage(i:Int) {
+		var chances = new StageArray(0.);
+		function getStage(i:Int) {
 			var r = i + bonus;
 			var stage = if (r >= dc + 10) {
-				3;
+				Stage.CritSuccess;
 			} else if (r >= dc) {
-				2;
+				Stage.Success;
 			} else if (r > dc - 10) {
-				1;
+				Stage.Failure;
 			} else {
-				0;
+				Stage.CritFailure;
 			}
 			// nat
-			if ((i == 20 || q.keenFlair && i == 19) && stage < 3) stage++;
-			if (i == 1 && stage > 0) stage--;
+			if ((i == 20 || q.keenFlair && i == 19) && stage != CritSuccess) stage++;
+			if (i == 1 && stage != CritFailure) stage--;
 			return stage;
 		}
 		if (q.sureStrike == Grid) {
@@ -119,9 +128,22 @@ class RollTable {
 			}
 		}
 		//
-		var values = if (q.efficiencies != null) {
-			[for (i in 0 ... 4) chances[i] / 100 * q.efficiencies[i]];
-		} else null;
+		if (q.flatChecks != null) {
+			for (i => chance in chances) if (i != FlatFailure) {
+				var newChance = chance;
+				for (flat in q.flatChecks) if (flat > 1) {
+					newChance *= (21 - flat) / 20;
+				}
+				chances[0] += chance - newChance;
+				chances[i] = newChance;
+			}
+		}
+		//
+		var values = null;
+		if (q.efficiencies != null) {
+			values = new StageArray(0.);
+			for (i => chance in chances) values[i] = chance / 100 * q.efficiencies[i];
+		}
 		//
 		var colSpans = chances.map(chance -> {
 			if (chance < 0.01) return 0;
@@ -142,8 +164,7 @@ class RollTable {
 			colSpans[widestStage] -= (colSpanSum - 20);
 		}
 		//
-		for (i in 0 ... 4) {
-			var chance = chances[i];
+		for (i => chance in chances) {
 			if (chance > 0) {
 				var stageTD = stages[i];
 				stageTD.style.display = "";
@@ -186,15 +207,15 @@ class RollTable {
 		} else title += ' ($bonus)';
 		var total = 0.;
 		if (q.efficiencies != null) {
-			for (i in 0 ... 4) {
+			for (i in 0 ... Stage.Count) {
 				total += chances[i] / 100 * q.efficiencies[i];
 			}
 		}
 		legend.innerText = title;
 		//
 		var notes = [
-			'Any success: ${chances[2] + chances[3]}%',
-			'any failure: ${chances[0] + chances[1]}%',
+			'Any success: ${chances[Success] + chances[CritSuccess]}%',
+			'any failure: ${chances[Failure] + chances[CritFailure] + chances[FlatFailure]}%',
 		];
 		if (q.efficiencies != null) {
 			var efficiencyNote = 'efficiency: $total';
@@ -207,5 +228,37 @@ class RollTable {
 		footnotes.innerText = notes.join("; ");
 		//
 		return total;
+	}
+}
+
+enum abstract Stage(Int) from Int to Int {
+	var FlatFailure = 0;
+	var CritFailure = 1;
+	var Failure = 2;
+	var Success = 3;
+	var CritSuccess = 4;
+	var Count = 5;
+}
+
+@:forward
+abstract StageArray<T>(Vector<T>) {
+	public function new(fill:T) {
+		this = new Vector(Stage.Count, fill);
+	}
+	public var length(get, never):Int;
+	inline function get_length() return this.length;
+	
+	@:arrayAccess inline function get(i:Stage) return this[i];
+	@:arrayAccess inline function set(i:Stage, v:T) {
+		this[i] = v;
+		return v;
+	}
+	
+	public inline function map<R>(fn:T->R):StageArray<R> {
+		return cast this.map(fn);
+	}
+	
+	public inline function keyValueIterator() {
+		return this.toArray().keyValueIterator();
 	}
 }

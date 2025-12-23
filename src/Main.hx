@@ -1,5 +1,6 @@
 package;
 
+import RollTable.StageArray;
 import js.html.Element;
 import js.html.SelectElement;
 import js.html.Console;
@@ -22,6 +23,7 @@ class Main {
 	//
 	static var inSureStrike:SelectElement = findInput("in-sure-strike");
 	static var inKeenFlair:InputElement = findInput("in-keen-flair");
+	static var inFlatChecks:InputElement = findInput("in-flat-checks");
 	//
 	static function findInput<T:Element>(id:String, ?c:Class<T>):T {
 		var input:T = cast document.getElementById(id);
@@ -43,12 +45,19 @@ class Main {
 			case "g": Grid;
 			default: Off;
 		}
-		q.efficiencies = if (inUseEfficiency.checked) {
-			[for (input in inEfficiency) input.valueAsNumber];
-		} else null;
+		if (inUseEfficiency.checked) {
+			q.efficiencies = new StageArray(0.);
+			for (i => input in inEfficiency) {
+				q.efficiencies[i + 1] = input.valueAsNumber;
+			}
+		}
 		q.keenFlair = inKeenFlair.checked;
+		~/(\d+)/g.map(inFlatChecks.value, rx -> {
+			var flat = Std.parseInt(rx.matched(1));
+			q.flatChecks.push(flat);
+			return "";
+		});
 		//
-		var firstEfficiency = 0.;
 		var efficiencyTotal = 0.;
 		for (attempt in 0 ... attempts) {
 			var table = tables[attempt];

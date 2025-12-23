@@ -29,6 +29,13 @@ main .table select {
 	width: 100%;
 	box-sizing: border-box;
 }
+main .table > div[title] {
+	cursor: help;
+}
+main .table > div[title]:after {
+	content: "[?]";
+	opacity: 0.3;
+}
 fieldset.hide {
 	opacity: 0.7;
 	padding-bottom: 0;
@@ -69,6 +76,7 @@ fieldset.hide > *:not(legend) {
 .results:not(.sure-strike) tr.sure-strike {
 	display: none;
 }
+/* These use Bootstrap 4 badge colors*/
 .crit-success {
 	color: white;
 	background-color: #007bff;
@@ -88,6 +96,10 @@ fieldset.hide > *:not(legend) {
 .crit-failure {
 	color: white;
 	background-color: #dc3545;
+}
+.flat-failure {
+	color: white;
+	background-color: #6c757d;
 }
 .stages span[class] {
 	padding: 0.1em 0.3em;
