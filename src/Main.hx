@@ -25,6 +25,9 @@ class Main {
 	static var inRollTable:InputElement = findInput("in-roll-table");
 	static var inKeenFlair:InputElement = findInput("in-keen-flair");
 	static var inFlatChecks:InputElement = findInput("in-flat-checks");
+	static var inStoredEfficiency:InputElement = findInput("in-efficiency-ref");
+	static var outEfficiencyResult = document.getElementById("efficiency-result");
+	static var outEfficiency = 0.;
 	//
 	static function findInput<T:Element>(id:String, ?c:Class<T>):T {
 		var input:T = cast document.getElementById(id);
@@ -91,16 +94,26 @@ class Main {
 			tables[extra].element.style.display = "none";
 		}
 		//
-		var efficiencyResult = document.getElementById("efficiency-result");
+		var efficiencyDiv = document.getElementById("efficiency-div");
 		if (q.efficiencies != null) {
-			efficiencyResult.innerText = "Efficiency total: " + efficiencyTotal.toFixed2();
-		} else efficiencyResult.innerText = "";
+			outEfficiency = efficiencyTotal;
+			var snip = efficiencyTotal.toFixed2();
+			if (inStoredEfficiency.value != "") {
+				var efficiencyRef = inStoredEfficiency.valueAsNumber;
+				if (Math.isFinite(efficiencyRef)) {
+					snip += " (" + (efficiencyTotal / efficiencyRef * 100).toFixed2() + "%)";
+				}
+			}
+			outEfficiencyResult.innerText = snip;
+			efficiencyDiv.style.display = "";
+		} else efficiencyDiv.style.display = "none";
 	}
 	public static function main() {
 		Console.log("Hello!");
 		for (fieldset in document.querySelectorAll("fieldset")) {
 			HtmlTools.makeFieldSetToggleable(cast fieldset);
 		}
+		//
 		var efficiencyPresets:SelectElement = cast document.getElementById("in-efficiency-presets");
 		efficiencyPresets.addEventListener("change", () -> {
 			var value = efficiencyPresets.value;
@@ -110,6 +123,16 @@ class Main {
 			//efficiencyPresets.value = "";
 			update();
 		});
+		//
+		document.getElementById("in-efficiency-store").addEventListener("click", (e) -> {
+			inStoredEfficiency.valueAsNumber = outEfficiency;
+			update();
+		});
+		document.getElementById("in-efficiency-clear").addEventListener("click", (e) -> {
+			inStoredEfficiency.value = "";
+			update();
+		});
+		//
 		update();
 	}
 }

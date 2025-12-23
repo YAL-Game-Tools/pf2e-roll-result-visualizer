@@ -91,47 +91,55 @@
 			</div>
 		</fieldset>
 		
-		<input id="in-use-efficiency" type="checkbox">
-		<label for="in-use-efficiency">
-			Calculate efficiency
-		</label>
-		
-		<div class="table" id="in-efficiency">
-			<div>
-				<select id="in-efficiency-presets">
-					<option value="0/0/100/200" selected>Strike</option>
-					<option value="-100/0/100/200">Shove</option>
-					<option value="-100/0/100/110">Trip</option>
-					<option value="0/50/100/200">Save</option>
-				</select>
-			</div><div>
-				Presets
+		<fieldset class="hide">
+			<legend>Efficiency</legend>
+			<div class="table" id="in-efficiency">
+				<div class="checkbox">
+					<input id="in-use-efficiency" type="checkbox">
+				</div><div>
+					Calculate
+				</div>
+				<div>
+					<select id="in-efficiency-presets">
+						<option value="0/0/100/200" selected>Strike</option>
+						<option value="-100/0/100/200">Shove</option>
+						<option value="-100/0/100/110">Trip</option>
+						<option value="0/50/100/200">Save</option>
+					</select>
+				</div><div>
+					Presets
+				</div>
+				<div>
+					<input id="in-efficiency-0" type="number" value="0"/>
+				</div><div>
+					Critical failure
+				</div>
+				<div>
+					<input id="in-efficiency-1" type="number" value="0"/>
+				</div><div>
+					Failure
+				</div>
+				<div>
+					<input id="in-efficiency-2" type="number" value="100"/>
+				</div><div>
+					Success
+				</div>
+				<div>
+					<input id="in-efficiency-3" type="number" value="200"/>
+				</div><div>
+					Critical success
+				</div>
 			</div>
-			<div></div><div></div>
-			<div>
-				<input id="in-efficiency-0" type="number" value="0"/>
-			</div><div>
-				Critical failure
-			</div>
-			<div>
-				<input id="in-efficiency-1" type="number" value="0"/>
-			</div><div>
-				Failure
-			</div>
-			<div>
-				<input id="in-efficiency-2" type="number" value="100"/>
-			</div><div>
-				Success
-			</div>
-			<div>
-				<input id="in-efficiency-3" type="number" value="200"/>
-			</div><div>
-				Critical success
-			</div>
-		</div>
+		</fieldset>
 		
 		<div id="results"></div>
-		<div id="efficiency-result"></div>
+		<div id="efficiency-div">
+			Efficiency total: <span id="efficiency-result"></span><br/>
+			Reference:
+			<input type="number" id="in-efficiency-ref" style="width: 4em"/>
+			<input type="button" id="in-efficiency-store" value="store"/>
+			<input type="button" id="in-efficiency-clear" value="clear"/>
+		</div>
 		
 		<fieldset>
 			<legend>About this tool</legend>

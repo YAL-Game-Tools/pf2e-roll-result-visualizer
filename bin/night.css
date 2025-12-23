@@ -33,7 +33,25 @@ body.night main input[type="text"],
 body.night main select {
     background: #0d1016;
     color: white;
-    border: 1px solid #516285;
+}
+body.night main input[type="number"],
+body.night main input[type="text"],
+body.night main input[type="button"],
+body.night main select {
+	border: 1px solid #516285;
+}
+body.night main input[type="number"]:hover,
+body.night main input[type="text"]:hover,
+body.night main input[type="button"]:hover,
+body.night main select:hover {
+	border-color: #8399c7;
+}
+body.night main input[type="button"] {
+	background: #252e40;
+    color: white;
+}
+body.night main input[type="button"]:hover {
+	background: #354158 ;
 }
 body.night a {
     color: #9DEC76;
