@@ -70,10 +70,10 @@ fieldset.hide > *:not(legend) {
 	padding-right: 0;
 	font-family: monospace, monospace;
 }
-.results.sure-strike tr.normal {
+.results.roll-2d tr.normal {
 	display: none;
 }
-.results:not(.sure-strike) tr.sure-strike {
+.results:not(.roll-2d) tr.roll-2d {
 	display: none;
 }
 /* These use Bootstrap 4 badge colors*/

@@ -55,23 +55,28 @@
 				Difficulty Class
 			</div>
 			<div>
-				<input id="in-map" type="number" value="4"/>
-			</div><div>
+				<input id="in-map" type="text" value="" placeholder="-5"/>
+			</div><div title='Can be things like "-2 -7" for Double Slice or "-4 -4" for Exacting Strike'>
 				<abbr title="Multiple attack penalty">MAP</abbr>
+			</div>
+			<div>
+				<select id="in-roll-mode">
+					<option selected value="1">Roll once</option>
+					<option value="2kh">Keep Higher</option>
+					<option value="2kl">Keep Lower</option>
+				</select>
+			</div><div title="For fortune/misfortune, Sure Strike, Devise a Stratagem tricks, etc.">
+				Roll mode
 			</div>
 		</div>
 		
 		<fieldset class="hide">
 			<legend>Rarer options</legend>
 			<div class="table" id="in-rarer">
-				<div>
-					<select id="in-sure-strike">
-						<option selected value="0">Off</option>
-						<option value="1">Simple</option>
-						<option value="g">Grid</option>
-					</select>
-				</div><div title="Also works for Devise a Stratagem if you have someone else to hit when you don't like the roll result">
-					<a href="https://2e.aonprd.com/Spells.aspx?ID=1709" rel="external">Sure Strike</a>
+				<div class="checkbox">
+					<input id="in-roll-table" type="checkbox" disabled/>
+				</div><div>
+					Show 2d roll table
 				</div>
 				<div class="checkbox">
 					<input id="in-keen-flair" type="checkbox"/>

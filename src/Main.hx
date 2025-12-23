@@ -21,7 +21,8 @@ class Main {
 		for (i in 0 ... 4) findInput("in-efficiency-" + i)
 	];
 	//
-	static var inSureStrike:SelectElement = findInput("in-sure-strike");
+	static var inRollMode:SelectElement = findInput("in-roll-mode");
+	static var inRollTable:InputElement = findInput("in-roll-table");
 	static var inKeenFlair:InputElement = findInput("in-keen-flair");
 	static var inFlatChecks:InputElement = findInput("in-flat-checks");
 	//
@@ -37,14 +38,15 @@ class Main {
 		var dc = Std.parseInt(inDC.value);
 		var attempts = Std.parseInt(inAttempts.value);
 		if (attempts < 1) attempts = 1;
-		var map = Std.parseInt(inMAP.value);
 		//
 		var q = new RollConfig();
-		q.sureStrike = switch (inSureStrike.value) {
-			case "1": On;
-			case "g": Grid;
-			default: Off;
+		q.rollMode = switch (inRollMode.value) {
+			case "2kh": KeepHigher;
+			case "2kl": KeepLower;
+			default: RollOnce;
 		}
+		inRollTable.disabled = q.rollMode == RollOnce;
+		q.rollTable = q.rollMode != RollOnce && inRollTable.checked;
 		if (inUseEfficiency.checked) {
 			q.efficiencies = new StageArray(0.);
 			for (i => input in inEfficiency) {
@@ -58,6 +60,15 @@ class Main {
 			return "";
 		});
 		//
+		var mapPerAttempt = [0];
+		~/(-?\d+)/g.map(inMAP.value, rx -> {
+			var flat = Std.parseInt(rx.matched(1));
+			mapPerAttempt.push(flat);
+			return "";
+		});
+		if (mapPerAttempt.length == 1) mapPerAttempt.push(-5);
+		if (mapPerAttempt.length < 3) mapPerAttempt.push(mapPerAttempt[1] * 2);
+		//
 		var efficiencyTotal = 0.;
 		for (attempt in 0 ... attempts) {
 			var table = tables[attempt];
@@ -65,10 +76,15 @@ class Main {
 				tables[attempt] = table = RollTable.create();
 			} else table.element.style.display = "";
 			
-			var efficiency = table.update(bonus, dc, q);
+			var attemptBonus = bonus;
+			if (attempt < mapPerAttempt.length) {
+				attemptBonus += mapPerAttempt[attempt];
+			} else {
+				attemptBonus += mapPerAttempt[mapPerAttempt.length - 1];
+			}
+			var efficiency = table.update(attemptBonus, dc, q);
 			if (attempt == 0) q.firstEfficiency = efficiency;
 			efficiencyTotal += efficiency;
-			bonus -= map;
 		}
 		//
 		for (extra in attempts ... tables.length) {

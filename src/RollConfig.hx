@@ -1,7 +1,8 @@
 import RollTable;
 
 class RollConfig {
-	public var sureStrike:SureStrike = Off;
+	public var rollMode:RollMode = RollOnce;
+	public var rollTable = false;
 	public var keenFlair = false;
 	public var firstEfficiency = 0.0;
 	public var efficiencies:StageArray<Float> = null;
@@ -10,8 +11,8 @@ class RollConfig {
 		
 	}  
 }
-enum abstract SureStrike(Int) {
-	var Off = 0;
-	var On = 1;
-	var Grid = 2;
+enum abstract RollMode(Int) {
+	var RollOnce = 0;
+	var KeepHigher = 1;
+	var KeepLower = 2;
 }

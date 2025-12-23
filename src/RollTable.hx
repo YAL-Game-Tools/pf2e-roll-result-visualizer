@@ -48,7 +48,7 @@ class RollTable {
 		
 		for (i in 1 ... 21) {
 			var sureStrikeDieRow = document.createTableRowElement();
-			sureStrikeDieRow.classList.add("dice", "sure-strike");
+			sureStrikeDieRow.classList.add("dice", "roll-2d");
 			sureStrikeDice[i] = [null];
 			for (k in 1 ... 21) {
 				var die = document.createTableCellElement();
@@ -98,21 +98,25 @@ class RollTable {
 			if (i == 1 && stage != CritFailure) stage--;
 			return stage;
 		}
-		if (q.sureStrike == Grid) {
-			table.classList.add("sure-strike");
+		var keepHigher = q.rollMode == KeepHigher;
+		inline function getStage2(i, k) {
+			return getStage((keepHigher ? i > k : i < k) ? i : k);
+		}
+		if (q.rollTable) {
+			table.classList.add("roll-2d");
 			for (i in 1 ... 21) {
 				for (k in 1 ... 21) {
-					var stage = getStage(i > k ? i : k);
+					var stage = getStage2(i, k);
 					chances[stage] += 100/20/20;
 					sureStrikeDice[k][i].className = stageClassNames[stage];
 				}
 			}
 		} else {
-			table.classList.remove("sure-strike");
-			if (q.sureStrike == On) {
+			table.classList.remove("roll-2d");
+			if (q.rollMode != RollOnce) {
 				for (i in 1 ... 21) {
 					for (k in 1 ... 21) {
-						var stage = getStage(i > k ? i : k);
+						var stage = getStage2(i, k);
 						chances[stage] += 100/20/20;
 						sureStrikeDice[k][i].className = stageClassNames[stage];
 					}
