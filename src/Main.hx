@@ -46,10 +46,12 @@ class Main {
 		q.rollMode = switch (inRollMode.value) {
 			case "2kh": KeepHigher;
 			case "2kl": KeepLower;
+			case "followup": FollowUpStrike;
 			default: RollOnce;
 		}
-		inRollTable.disabled = q.rollMode == RollOnce;
-		q.rollTable = q.rollMode != RollOnce && inRollTable.checked;
+		var isRoll2 = q.rollMode.isPair();
+		inRollTable.disabled = !isRoll2;
+		q.rollTable = isRoll2 && inRollTable.checked;
 		if (inUseEfficiency.checked) {
 			q.efficiencies = new StageArray(0.);
 			for (i => input in inEfficiency) {

@@ -113,7 +113,7 @@ class RollTable {
 			}
 		} else {
 			table.classList.remove("roll-2d");
-			if (q.rollMode != RollOnce) {
+			if (q.rollMode.isPair()) {
 				for (i in 1 ... 21) {
 					for (k in 1 ... 21) {
 						var stage = getStage2(i, k);
@@ -128,6 +128,17 @@ class RollTable {
 					var stage = getStage(i);
 					chances[stage] += 5;
 					dice[i].className = stageClassNames[stage];
+				}
+				if (q.rollMode == FollowUpStrike) {
+					var critFail = chances[CritFailure];
+					var fail = chances[Failure];
+					var success = chances[Success];
+					var critSuccess = chances[CritSuccess];
+					var anyFail = (critFail + fail) / 100;
+					chances[Success] += anyFail * success;
+					chances[CritSuccess] += anyFail * critSuccess;
+					chances[Failure] *= anyFail;
+					chances[CritFailure] *= anyFail;
 				}
 			}
 		}
@@ -176,11 +187,14 @@ class RollTable {
 				var value = values != null ? values[i] : null;
 				var valueStr = value != null ? value.toFixed2() : null;
 				//
-				var chanceStr = chance + "%";
-				var text = chance + "%";
+				var chanceStr = chance.toFixed2() + "%";
+				var text = chance.toFixed2() + "%";
 				if (valueStr != null) text += '\n$valueStr';
 				//
-				if (chances[i] >= 10 || (valueStr == null || valueStr.length <= 2) && chanceStr.length <= 2) {
+				var colSpan = colSpans[i];
+				stageTD.colSpan = colSpans[i];
+				//
+				if (colSpan >= 2 || (valueStr == null || valueStr.length <= 2) && chanceStr.length <= 2) {
 					stageTD.innerText = text;
 					stageTD.removeAttribute("title");
 					stageTD.onclick = null;
@@ -199,7 +213,6 @@ class RollTable {
 						Browser.window.alert(text);
 					};
 				}
-				stageTD.colSpan = colSpans[i];
 			} else {
 				stages[i].style.display = "none";
 			}
@@ -218,8 +231,8 @@ class RollTable {
 		legend.innerText = title;
 		//
 		var notes = [
-			'Any success: ${chances[Success] + chances[CritSuccess]}%',
-			'any failure: ${chances[Failure] + chances[CritFailure] + chances[FlatFailure]}%',
+			'Any success: ${(chances[Success] + chances[CritSuccess]).toFixed2()}%',
+			'any failure: ${(chances[Failure] + chances[CritFailure] + chances[FlatFailure]).toFixed2()}%',
 		];
 		if (q.efficiencies != null) {
 			var efficiencyNote = 'efficiency: $total';

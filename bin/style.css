@@ -101,6 +101,11 @@ fieldset.hide > *:not(legend) {
 	color: white;
 	background-color: #6c757d;
 }
+.stages td[title] {
+	text-decoration: underline dotted;
+	cursor: help;
+}
+
 .stages span[class] {
 	padding: 0.1em 0.3em;
 	border-radius: 0.2em;
