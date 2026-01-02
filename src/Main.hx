@@ -1,5 +1,8 @@
 package;
 
+import js.html.ClipboardEvent;
+import haxe.Json;
+import haxe.DynamicAccess;
 import RollTable.StageArray;
 import js.html.Element;
 import js.html.SelectElement;
@@ -26,11 +29,22 @@ class Main {
 	static var inKeenFlair:InputElement = findInput("in-keen-flair");
 	static var inFlatChecks:InputElement = findInput("in-flat-checks");
 	static var inStoredEfficiency:InputElement = findInput("in-efficiency-ref");
+	//
+	static var inMultiHit:InputElement = findInput("in-use-multi");
+	static var inMultiHitTable:InputElement = findInput("in-multi-table");
+	//
 	static var outEfficiencyResult = document.getElementById("efficiency-result");
 	static var outEfficiency = 0.;
 	//
+	public static var fieldsToSaveAndLoad:Array<Element>;
 	static function findInput<T:Element>(id:String, ?c:Class<T>):T {
 		var input:T = cast document.getElementById(id);
+		if (fieldsToSaveAndLoad == null) {
+			fieldsToSaveAndLoad = [
+				document.getElementById("in-notes"),
+			];
+		}
+		fieldsToSaveAndLoad.push(input);
 		input.addEventListener("change", () -> {
 			update();
 		});
@@ -74,6 +88,7 @@ class Main {
 		if (mapPerAttempt.length == 1) mapPerAttempt.push(-5);
 		if (mapPerAttempt.length < 3) mapPerAttempt.push(mapPerAttempt[1] * 2);
 		//
+		var chancesPerAttempt = [];
 		var efficiencyTotal = 0.;
 		for (attempt in 0 ... attempts) {
 			var table = tables[attempt];
@@ -87,9 +102,10 @@ class Main {
 			} else {
 				attemptBonus += mapPerAttempt[mapPerAttempt.length - 1];
 			}
-			var efficiency = table.update(attemptBonus, dc, q);
-			if (attempt == 0) q.firstEfficiency = efficiency;
-			efficiencyTotal += efficiency;
+			var result = table.update(attemptBonus, dc, q);
+			if (attempt == 0) q.firstEfficiency = result.efficiency;
+			chancesPerAttempt.push(result.chances);
+			efficiencyTotal += result.efficiency;
 		}
 		//
 		for (extra in attempts ... tables.length) {
@@ -109,6 +125,12 @@ class Main {
 			outEfficiencyResult.innerText = snip;
 			efficiencyDiv.style.display = "";
 		} else efficiencyDiv.style.display = "none";
+		//
+		if (inMultiHit.checked) {
+			MultiHit.useTable = inMultiHitTable.checked;
+			MultiHit.calc(chancesPerAttempt);
+		} else MultiHit.clear();
+		//
 	}
 	public static function main() {
 		Console.log("Hello!");
@@ -133,6 +155,46 @@ class Main {
 		document.getElementById("in-efficiency-clear").addEventListener("click", (e) -> {
 			inStoredEfficiency.value = "";
 			update();
+		});
+		//
+		document.getElementById("in-multi-store").addEventListener("click", (e) -> {
+			MultiHit.stored = MultiHit.latest;
+			update();
+		});
+		document.getElementById("in-multi-clear").addEventListener("click", (e) -> {
+			MultiHit.stored = null;
+			update();
+		});
+		//
+		fieldsToSaveAndLoad.remove(inStoredEfficiency);
+		document.getElementById("in-copy").addEventListener("click", (e) -> {
+			var json = new DynamicAccess<Any>();
+			for (field in fieldsToSaveAndLoad) {
+				if (field.tagName == "INPUT" && (cast field:InputElement).type == "checkbox") {
+					json[field.id] = (cast field:InputElement).checked;
+				} else {
+					json[field.id] = (cast field:InputElement).value;
+				}
+			}
+			Browser.navigator.clipboard.writeText(Json.stringify(json, null, "\t"));
+		});
+		document.getElementById("in-paste").addEventListener("paste", (e:ClipboardEvent) -> {
+			e.preventDefault();
+			var text = e.clipboardData.getData("text/plain");
+			var json:DynamicAccess<Any> = Json.parse(text);
+			for (field in fieldsToSaveAndLoad) {
+				var value = json[field.id];
+				if (value == null) continue;
+				if (value is Bool) {
+					if (field.tagName == "INPUT" && (cast field:InputElement).type == "checkbox") {
+						(cast field:InputElement).checked = value;
+					}
+					continue;
+				}
+				(cast field:InputElement).value = value;
+			}
+			update();
+			return false;
 		});
 		//
 		update();

@@ -10,11 +10,7 @@
 	<main>
 		<input id="night" type="checkbox"/>
 		<label for="night"></label>
-		<h1>
-			<abbr title="YellowAfterlife">YAL</abbr>'s
-			<abbr title="Pathfinder 2nd edition">PF2e</abbr>
-			roll result visualizer
-		</h1>
+		<h1>YAL's PF2e roll result visualizer</h1>
 		<script>(function() {
 			var key = "roll-result-vis-night";
 			var cb = document.getElementById("night");
@@ -38,6 +34,11 @@
 			sync();
 		})()</script>
 		
+		<div style="display: flex; margin-bottom: 0.3em; gap: 0.25em" id="in-notes-div">
+			<input id="in-notes" type="text" placeholder="Label/notes for screenshots" style="flex-grow: 1"/>
+			<input type="button" value="copy" id="in-copy" />
+			<input type="text" id="in-paste" placeholder="paste here" style="width: 5em"/>
+		</div>
 		<div class="table" id="in-main">
 			<div>
 				<input id="in-bonus" type="number" value="14"/>
@@ -64,7 +65,7 @@
 					<option selected value="1">Roll once</option>
 					<option value="2kh">Keep Higher</option>
 					<option value="2kl">Keep Lower</option>
-					<option value="followup">Follow-up Strike</option>
+					<!-- <option value="followup">Follow-up Strike</option> -->
 				</select>
 			</div><div title="For fortune/misfortune, Sure Strike, Devise a Stratagem tricks, etc.">
 				Roll mode
@@ -131,16 +132,36 @@
 					Critical success
 				</div>
 			</div>
+			<div id="efficiency-div">
+				Efficiency total: <span id="efficiency-result"></span><br/>
+				Reference:
+				<input type="number" id="in-efficiency-ref" style="width: 4em"/>
+				<input type="button" id="in-efficiency-store" value="store"/>
+				<input type="button" id="in-efficiency-clear" value="clear"/>
+			</div>
+		</fieldset>
+		
+		<fieldset class="hide">
+			<legend>Multi-hit</legend>
+			<div class="table" id="in-multi">
+				<div class="checkbox">
+					<input id="in-use-multi" type="checkbox">
+				</div><div>
+					Calculate
+				</div>
+				<div class="checkbox">
+					<input id="in-multi-table" type="checkbox">
+				</div><div>
+					Show table
+				</div>
+			</div>
+			<div id="multi-out">
+			</div>
+			<input type="button" id="in-multi-store" value="store"/>
+			<input type="button" id="in-multi-clear" value="clear"/>
 		</fieldset>
 		
 		<div id="results"></div>
-		<div id="efficiency-div">
-			Efficiency total: <span id="efficiency-result"></span><br/>
-			Reference:
-			<input type="number" id="in-efficiency-ref" style="width: 4em"/>
-			<input type="button" id="in-efficiency-store" value="store"/>
-			<input type="button" id="in-efficiency-clear" value="clear"/>
-		</div>
 		
 		<fieldset>
 			<legend>About this tool</legend>

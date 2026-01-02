@@ -12,6 +12,9 @@ class HtmlTools {
 	public static inline function toFixed2(n:Float):String {
 		return "" + Math.round(n * 100) / 100;
 	}
+	public static inline function toPercent(n:Float) {
+		return toFixed2(n) + "%";
+	}
 	public static function makeFieldSetToggleable(q:FieldSetElement) {
 		var legend = q.querySelector("& > legend");
 		legend.onclick = (e) -> {

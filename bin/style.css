@@ -25,7 +25,8 @@ main h1 {
 	transform: skewX(-5deg);
 }
 main .table input:not([type="checkbox"]),
-main .table select {
+main .table select,
+main input.wide {
 	width: 100%;
 	box-sizing: border-box;
 }
@@ -69,6 +70,10 @@ fieldset.hide > *:not(legend) {
 	padding-left: 0;
 	padding-right: 0;
 	font-family: monospace, monospace;
+}
+.results td.left,
+.results th.left {
+	text-align: left;
 }
 .results.roll-2d tr.normal {
 	display: none;

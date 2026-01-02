@@ -231,11 +231,11 @@ class RollTable {
 		legend.innerText = title;
 		//
 		var notes = [
-			'Any success: ${(chances[Success] + chances[CritSuccess]).toFixed2()}%',
-			'any failure: ${(chances[Failure] + chances[CritFailure] + chances[FlatFailure]).toFixed2()}%',
+			'Any success: ${(chances.getAnySuccess()).toFixed2()}%',
+			'any failure: ${(chances.getAnyFailure()).toFixed2()}%',
 		];
 		if (q.efficiencies != null) {
-			var efficiencyNote = 'efficiency: $total';
+			var efficiencyNote = 'efficiency: ' + total.toFixed2();
 			if (q.firstEfficiency != 0) {
 				var factor = (total / q.firstEfficiency * 100).toFixed1();
 				efficiencyNote += ' ($factor%)';
@@ -244,7 +244,7 @@ class RollTable {
 		}
 		footnotes.innerText = notes.join("; ");
 		//
-		return total;
+		return { efficiency: total, chances: chances };
 	}
 }
 
@@ -254,10 +254,13 @@ enum abstract Stage(Int) from Int to Int {
 	var Failure = 2;
 	var Success = 3;
 	var CritSuccess = 4;
+	public function isSuccess() {
+		return this == Success || this == CritSuccess;
+	}
 	var Count = 5;
 }
 
-@:forward
+@:forward @:using(RollTable.StageArrayTools)
 abstract StageArray<T>(Vector<T>) {
 	public function new(fill:T) {
 		this = new Vector(Stage.Count, fill);
@@ -277,5 +280,13 @@ abstract StageArray<T>(Vector<T>) {
 	
 	public inline function keyValueIterator() {
 		return this.toArray().keyValueIterator();
+	}
+}
+class StageArrayTools {
+	public static function getAnySuccess<T:Float>(arr:StageArray<T>) {
+		return arr[Success] + arr[CritSuccess];
+	}
+	public static function getAnyFailure<T:Float>(arr:StageArray<T>) {
+		return arr[Failure] + arr[CritFailure] + arr[FlatFailure];
 	}
 }
