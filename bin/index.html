@@ -37,6 +37,7 @@
 		<div style="display: flex; margin-bottom: 0.3em; gap: 0.25em" id="in-notes-div">
 			<input id="in-notes" type="text" placeholder="Label/notes for screenshots" style="flex-grow: 1"/>
 			<input type="button" value="copy" id="in-copy" />
+			<input type="checkbox" id="in-copy-pretty" title="Pretty-print JSON" />
 			<input type="text" id="in-paste" placeholder="paste here" style="width: 5em"/>
 		</div>
 		<div class="table" id="in-main">
@@ -57,7 +58,7 @@
 			</div>
 			<div>
 				<input id="in-map" type="text" value="" placeholder="-5"/>
-			</div><div title='Can be things like "-2 -10" for Double Slice or "-5 -5" for Exacting Strike'>
+			</div><div title='Can be things like "-5 -5" for Exacting Strike'>
 				<abbr title="Multiple attack penalty">MAP</abbr>
 			</div>
 			<div>
@@ -72,7 +73,7 @@
 			</div>
 		</div>
 		
-		<fieldset class="hide">
+		<fieldset class="hide" id="fs-rare">
 			<legend>Rarer options</legend>
 			<div class="table" id="in-rarer">
 				<div class="checkbox">
@@ -93,7 +94,7 @@
 			</div>
 		</fieldset>
 		
-		<fieldset class="hide">
+		<fieldset class="hide" id="fs-efficiency">
 			<legend>Efficiency</legend>
 			<div class="table" id="in-efficiency">
 				<div class="checkbox">
@@ -112,36 +113,46 @@
 					Presets
 				</div>
 				<div>
-					<input id="in-efficiency-0" type="number" value="0"/>
+					<input type="text" id="in-efficiency-0" value="0"/>
 				</div><div>
 					Critical failure
 				</div>
 				<div>
-					<input id="in-efficiency-1" type="number" value="0"/>
+					<input type="text" id="in-efficiency-1" value="0"/>
 				</div><div>
 					Failure
 				</div>
 				<div>
-					<input id="in-efficiency-2" type="number" value="100"/>
+					<input type="text" id="in-efficiency-2" value="100"/>
 				</div><div>
 					Success
 				</div>
 				<div>
-					<input id="in-efficiency-3" type="number" value="200"/>
+					<input type="text" id="in-efficiency-3" value="200"/>
 				</div><div>
 					Critical success
+				</div>
+				<div class="checkbox">
+					<input id="in-efficiency-ranges" type="checkbox">
+				</div><div title="Shows chance-adjusted efficiency ranges if you use formulas like 1d8+4. A little confusing as a concept.">
+					Show ranges
+				</div>
+				<div>
+					<input type="number" id="in-forceful-efficiency" placeholder="0"/>
+				</div><div>
+					Forceful adjust
 				</div>
 			</div>
 			<div id="efficiency-div">
 				Efficiency total: <span id="efficiency-result"></span><br/>
 				Reference:
-				<input type="number" id="in-efficiency-ref" style="width: 4em"/>
+				<input type="text" id="in-efficiency-ref" style="width: 4em"/>
 				<input type="button" id="in-efficiency-store" value="store"/>
 				<input type="button" id="in-efficiency-clear" value="clear"/>
 			</div>
 		</fieldset>
 		
-		<fieldset class="hide">
+		<fieldset class="hide" id="fs-multi">
 			<legend>Multi-hit</legend>
 			<div class="table" id="in-multi">
 				<div class="checkbox">

@@ -1,11 +1,13 @@
+import txr.Range;
 import RollTable;
 
 class RollConfig {
 	public var rollMode:RollMode = RollOnce;
 	public var rollTable = false;
 	public var keenFlair = false;
-	public var firstEfficiency = 0.0;
-	public var efficiencies:StageArray<Float> = null;
+	public var firstEfficiency:Range = null;
+	public var efficiencies:StageArray<Range> = null;
+	public var forcefulEfficiency = 0.;
 	public var flatChecks = [];
 	public function new() {
 		

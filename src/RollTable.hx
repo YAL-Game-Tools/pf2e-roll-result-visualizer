@@ -1,3 +1,4 @@
+import txr.Range;
 import haxe.ds.Vector;
 import js.html.TableRowElement;
 import js.html.DivElement;
@@ -80,7 +81,7 @@ class RollTable {
 		document.getElementById("results").append(table.element);
 		return table;
 	}
-	public function update(bonus:Int, dc:Int, q:RollConfig) {
+	public function update(bonus:Int, dc:Int, q:RollConfig, attempt:Int) {
 		var chances = new StageArray(0.);
 		function getStage(i:Int) {
 			var r = i + bonus;
@@ -154,10 +155,22 @@ class RollTable {
 			}
 		}
 		//
-		var values = null;
+		var efficiencies:StageArray<Range> = null;
 		if (q.efficiencies != null) {
-			values = new StageArray(0.);
-			for (i => chance in chances) values[i] = chance / 100 * q.efficiencies[i];
+			efficiencies = q.efficiencies.map(efficiency -> {
+				if (efficiency.isPositive()) {
+					efficiency += (attempt < 2 ? attempt : 2) * q.forcefulEfficiency;
+				}
+				return efficiency;
+			});
+		}
+		//
+		var values:StageArray<Range> = null;
+		if (efficiencies != null) {
+			values = StageArray.createExt(i -> new Range(0, 0));
+			for (i => chance in chances) {
+				values[i] = efficiencies[i] * chance / 100;
+			}
 		}
 		//
 		var colSpans = chances.map(chance -> {
@@ -185,7 +198,7 @@ class RollTable {
 				stageTD.style.display = "";
 				//
 				var value = values != null ? values[i] : null;
-				var valueStr = value != null ? value.toFixed2() : null;
+				var valueStr = value != null ? value.toString() : null;
 				//
 				var chanceStr = chance.toFixed2() + "%";
 				var text = chance.toFixed2() + "%";
@@ -204,7 +217,7 @@ class RollTable {
 					if (valueStr != null) {
 						short += "\n";
 						if (value != 0) {
-							short += value < 0 ? "-#" : "+#";
+							short += value.isNegative() ? "-#" : "+#";
 						} else short += "0";
 					}
 					stageTD.innerText = short;
@@ -222,10 +235,10 @@ class RollTable {
 		if (bonus >= 0) {
 			title += ' (+$bonus)';
 		} else title += ' ($bonus)';
-		var total = 0.;
-		if (q.efficiencies != null) {
+		var total = new Range(0, 0);
+		if (efficiencies != null) {
 			for (i in 0 ... Stage.Count) {
-				total += chances[i] / 100 * q.efficiencies[i];
+				total += efficiencies[i] * chances[i] / 100;
 			}
 		}
 		legend.innerText = title;
@@ -235,9 +248,9 @@ class RollTable {
 			'any failure: ${(chances.getAnyFailure()).toFixed2()}%',
 		];
 		if (q.efficiencies != null) {
-			var efficiencyNote = 'efficiency: ' + total.toFixed2();
-			if (q.firstEfficiency != 0) {
-				var factor = (total / q.firstEfficiency * 100).toFixed1();
+			var efficiencyNote = 'efficiency: ' + total.toStringAvg();
+			if (q.firstEfficiency != null) {
+				var factor = (total.avg / q.firstEfficiency.avg * 100).toFixed2();
 				efficiencyNote += ' ($factor%)';
 			}
 			notes.push(efficiencyNote);
@@ -265,6 +278,14 @@ abstract StageArray<T>(Vector<T>) {
 	public function new(fill:T) {
 		this = new Vector(Stage.Count, fill);
 	}
+	public static inline function createExt<T>(filler:Int->T) {
+		var arr:StageArray<T> = new StageArray(cast null);
+		for (i in 0 ... Stage.Count) {
+			arr[i] = filler(i);
+		}
+		return arr;
+	}
+	
 	public var length(get, never):Int;
 	inline function get_length() return this.length;
 	

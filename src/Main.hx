@@ -1,5 +1,6 @@
 package;
 
+import txr.Range;
 import js.html.ClipboardEvent;
 import haxe.Json;
 import haxe.DynamicAccess;
@@ -23,6 +24,8 @@ class Main {
 	static var inEfficiency:Array<InputElement> = [
 		for (i in 0 ... 4) findInput("in-efficiency-" + i)
 	];
+	static var inEfficiencyRanges:InputElement = findInput("in-efficiency-ranges");
+	static var inForcefulEfficiency:InputElement = findInput("in-forceful-efficiency");
 	//
 	static var inRollMode:SelectElement = findInput("in-roll-mode");
 	static var inRollTable:InputElement = findInput("in-roll-table");
@@ -34,7 +37,7 @@ class Main {
 	static var inMultiHitTable:InputElement = findInput("in-multi-table");
 	//
 	static var outEfficiencyResult = document.getElementById("efficiency-result");
-	static var outEfficiency = 0.;
+	static var outEfficiency = new Range(0, 0);
 	//
 	public static var fieldsToSaveAndLoad:Array<Element>;
 	static function findInput<T:Element>(id:String, ?c:Class<T>):T {
@@ -66,10 +69,19 @@ class Main {
 		var isRoll2 = q.rollMode.isPair();
 		inRollTable.disabled = !isRoll2;
 		q.rollTable = isRoll2 && inRollTable.checked;
+		//
+		var useRanges = inEfficiencyRanges.checked;
 		if (inUseEfficiency.checked) {
-			q.efficiencies = new StageArray(0.);
+			q.efficiencies = StageArray.createExt(i -> new Range(0, 0));
 			for (i => input in inEfficiency) {
-				q.efficiencies[i + 1] = input.valueAsNumber;
+				var range = txr.TxrProgram.eval(input.value);
+				if (!useRanges) range = Range.fromNumber(range.avg);
+				q.efficiencies[i + 1] = range;
+			}
+			//
+			var forcefulEfficiency = inForcefulEfficiency.valueAsNumber;
+			if (Math.isFinite(forcefulEfficiency)) {
+				q.forcefulEfficiency = forcefulEfficiency;
 			}
 		}
 		q.keenFlair = inKeenFlair.checked;
@@ -89,7 +101,7 @@ class Main {
 		if (mapPerAttempt.length < 3) mapPerAttempt.push(mapPerAttempt[1] * 2);
 		//
 		var chancesPerAttempt = [];
-		var efficiencyTotal = 0.;
+		var efficiencyTotal = new Range(0, 0);
 		for (attempt in 0 ... attempts) {
 			var table = tables[attempt];
 			if (table == null) {
@@ -102,7 +114,7 @@ class Main {
 			} else {
 				attemptBonus += mapPerAttempt[mapPerAttempt.length - 1];
 			}
-			var result = table.update(attemptBonus, dc, q);
+			var result = table.update(attemptBonus, dc, q, attempt);
 			if (attempt == 0) q.firstEfficiency = result.efficiency;
 			chancesPerAttempt.push(result.chances);
 			efficiencyTotal += result.efficiency;
@@ -115,11 +127,17 @@ class Main {
 		var efficiencyDiv = document.getElementById("efficiency-div");
 		if (q.efficiencies != null) {
 			outEfficiency = efficiencyTotal;
-			var snip = efficiencyTotal.toFixed2();
+			var snip = efficiencyTotal.toStringAvg();
 			if (inStoredEfficiency.value != "") {
-				var efficiencyRef = inStoredEfficiency.valueAsNumber;
-				if (Math.isFinite(efficiencyRef)) {
-					snip += " (" + (efficiencyTotal / efficiencyRef * 100).toFixed2() + "%)";
+				var efficiencyRef = txr.TxrProgram.eval(inStoredEfficiency.value);
+				if (efficiencyRef != null) {
+					var rangeRatio = (efficiencyTotal / efficiencyRef * 100);
+					if (!rangeRatio.isPoint()) {
+						var avgRatio = (efficiencyTotal.avg / efficiencyRef.avg * 100).toFixed2();
+						snip += ' (${rangeRatio.toString()}%, $avgRatio% avg)';
+					} else {
+						snip += ' (${rangeRatio.toString()}%)';
+					}
 				}
 			}
 			outEfficiencyResult.innerText = snip;
@@ -149,7 +167,7 @@ class Main {
 		});
 		//
 		document.getElementById("in-efficiency-store").addEventListener("click", (e) -> {
-			inStoredEfficiency.valueAsNumber = outEfficiency;
+			inStoredEfficiency.value = outEfficiency.toString();
 			update();
 		});
 		document.getElementById("in-efficiency-clear").addEventListener("click", (e) -> {
@@ -176,7 +194,9 @@ class Main {
 					json[field.id] = (cast field:InputElement).value;
 				}
 			}
-			Browser.navigator.clipboard.writeText(Json.stringify(json, null, "\t"));
+			var pretty:InputElement = cast document.getElementById("in-copy-pretty");
+			var text = pretty.checked ? Json.stringify(json, null, "\t") : Json.stringify(json);
+			Browser.navigator.clipboard.writeText(text);
 		});
 		document.getElementById("in-paste").addEventListener("paste", (e:ClipboardEvent) -> {
 			e.preventDefault();
