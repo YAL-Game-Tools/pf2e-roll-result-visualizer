@@ -157,12 +157,15 @@ class RollTable {
 		//
 		var efficiencies:StageArray<Range> = null;
 		if (q.efficiencies != null) {
-			efficiencies = q.efficiencies.map(efficiency -> {
+			efficiencies = StageArray.createExt(i -> new Range(0, 0));
+			for (stage => efficiency in q.efficiencies) {
 				if (efficiency.isPositive()) {
-					efficiency += (attempt < 2 ? attempt : 2) * q.forcefulEfficiency;
+					var forcefulFactor = (attempt < 2 ? attempt : 2);
+					if (stage == Stage.CritSuccess) forcefulFactor *= 2;
+					efficiency += forcefulFactor * q.forcefulEfficiency;
 				}
-				return efficiency;
-			});
+				efficiencies[stage] = efficiency;
+			}
 		}
 		//
 		var values:StageArray<Range> = null;
@@ -204,13 +207,21 @@ class RollTable {
 				var text = chance.toFixed2() + "%";
 				if (valueStr != null) text += '\n$valueStr';
 				//
+				var fullLines = [];
+				if (efficiencies != null) {
+					fullLines.push("Efficiency: " + efficiencies[i].toStringAvg());
+				}
+				fullLines.push("Chance: " + chanceStr);
+				if (valueStr != null) {
+					fullLines.push("Adjusted: " + valueStr);
+				}
+				var full = fullLines.join("\n");
+				//
 				var colSpan = colSpans[i];
 				stageTD.colSpan = colSpans[i];
 				//
 				if (colSpan >= 2 || (valueStr == null || valueStr.length <= 2) && chanceStr.length <= 2) {
 					stageTD.innerText = text;
-					stageTD.removeAttribute("title");
-					stageTD.onclick = null;
 				} else {
 					var short = Math.round(chance) + "%";
 					if (short == "0%" && chance > 0) short = "1%";
@@ -221,11 +232,11 @@ class RollTable {
 						} else short += "0";
 					}
 					stageTD.innerText = short;
-					stageTD.title = text;
-					stageTD.onclick = () -> {
-						Browser.window.alert(text);
-					};
 				}
+				stageTD.title = full;
+				stageTD.onclick = () -> {
+					Browser.window.alert(full);
+				};
 			} else {
 				stages[i].style.display = "none";
 			}
