@@ -75,6 +75,10 @@ class Main {
 			q.efficiencies = StageArray.createExt(i -> new Range(0, 0));
 			for (i => input in inEfficiency) {
 				var range = txr.TxrProgram.eval(input.value);
+				if (range == null) {
+					input.classList.add("error");
+					range = Range.fromNumber(0);
+				} else input.classList.remove("error");
 				if (!useRanges) range = Range.fromNumber(range.avg);
 				q.efficiencies[i + 1] = range;
 			}
@@ -167,7 +171,7 @@ class Main {
 		});
 		//
 		document.getElementById("in-efficiency-store").addEventListener("click", (e) -> {
-			inStoredEfficiency.value = outEfficiency.toString();
+			inStoredEfficiency.value = outEfficiency.toStringFull();
 			update();
 		});
 		document.getElementById("in-efficiency-clear").addEventListener("click", (e) -> {

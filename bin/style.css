@@ -30,6 +30,9 @@ main input.wide {
 	width: 100%;
 	box-sizing: border-box;
 }
+main input.error {
+	outline: 1px solid red;
+}
 main .table > div[title] {
 	cursor: help;
 }

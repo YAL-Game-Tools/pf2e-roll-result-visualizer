@@ -83,4 +83,8 @@ class RangeImpl {
 		return HtmlTools.toFixed2(min) + "~" + HtmlTools.toFixed2(max)
 			+ " / " + HtmlTools.toFixed2((min + max) / 2) + " avg";
 	}
+	public function toStringFull() {
+		if (isPoint()) return Std.string(min);
+		return Std.string(min) + "~" + Std.string(max);
+	}
 }
