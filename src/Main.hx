@@ -12,6 +12,8 @@ import js.Browser;
 import js.Browser.document;
 import js.html.InputElement;
 using HtmlTools;
+// https://evanhahn.com/javascript-compression-streams-api-with-strings
+// https://github.com/basro/hx-jsasync
 
 class Main {
 	static var tables:Array<RollTable> = [];
