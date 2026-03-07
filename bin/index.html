@@ -3,6 +3,8 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width" />
 	<title>YAL's PF2e roll result visualizer</title>
+	<meta property="og:title" content="YAL's PF2e roll result visualizer" />
+	<meta property="og:description" content='For the burning Pathfinder 2nd edition questions like "does it make sense to grapple this enemy", "how much does a +1 status bonus help", or "should I attack with MAP?".' />
 	<link rel="stylesheet" href="style.css?v=AUTO_DATE"/>
 	<link rel="stylesheet" href="night.css?v=AUTO_DATE"/>
 	<script defer="" src="https://cloud.umami.is/script.js" data-website-id="5e27083a-c054-4136-9592-b43ac60a5e84"></script>
@@ -174,10 +176,12 @@
 		
 		<div id="results"></div>
 		
-		<fieldset>
+		<fieldset class="hide">
 			<legend><i>What else can I do?</i></legend>
-			Not feeling great about doing a Strike with MAP-10?
-			There are alternatives.
+			<p>
+				Not feeling great about doing a Strike with MAP-10?
+				There are alternatives.
+			</p>
 			<details><summary>Aid</summary>
 				<p>
 					<a href="https://2e.aonprd.com/Actions.aspx?ID=2292" rel="external">Aid</a>
@@ -227,7 +231,7 @@
 					actions is a pretty big deal, which includes moving away if you're the only character
 					next to it and it will have to move after you.
 				</p><p>
-					Bonus points if you have Reactive Strike and the enemy doesn't -
+					Bonus points if you have a reach weapon and Reactive Strike while the enemy doesn't -
 					then you can Stride two tiles away and have the enemy choose between spending two actions on Step
 					or taking a MAP-less RS hit from you.
 				</p>
