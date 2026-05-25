@@ -38,9 +38,10 @@
 		
 		<div style="display: flex; margin-bottom: 0.3em; gap: 0.25em" id="in-notes-div">
 			<input id="in-notes" type="text" placeholder="Label/notes for screenshots" style="flex-grow: 1"/>
-			<input type="button" value="copy" id="in-copy" />
+			<input type="button" value="share" id="in-share" title="Copy a link to this setup" />
+			<input type="button" value="copy" id="in-copy" title="Copy this setup as JSON" />
 			<input type="checkbox" id="in-copy-pretty" title="Pretty-print JSON" />
-			<input type="text" id="in-paste" placeholder="paste here" style="width: 5em"/>
+			<input type="text" id="in-paste" placeholder="paste here" style="width: 5em" title="Paste earlier copied JSON here"/>
 		</div>
 		<div class="table" id="in-main">
 			<div>
@@ -268,6 +269,7 @@
 			</p>
 		</fieldset>
 		
+		<script src="StringGZ.js"></script>
 		<script src="script.js?v=AUTO_DATE"></script>
 	</main>
 </body></html>

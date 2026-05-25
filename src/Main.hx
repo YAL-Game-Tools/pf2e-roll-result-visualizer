@@ -1,5 +1,6 @@
 package;
 
+import js.html.URLSearchParams;
 import txr.Range;
 import js.html.ClipboardEvent;
 import haxe.Json;
@@ -191,7 +192,7 @@ class Main {
 		});
 		//
 		fieldsToSaveAndLoad.remove(inStoredEfficiency);
-		document.getElementById("in-copy").addEventListener("click", (e) -> {
+		function getJSON(wantPretty:Bool) {
 			var json = new DynamicAccess<Any>();
 			for (field in fieldsToSaveAndLoad) {
 				if (field.tagName == "INPUT" && (cast field:InputElement).type == "checkbox") {
@@ -201,12 +202,9 @@ class Main {
 				}
 			}
 			var pretty:InputElement = cast document.getElementById("in-copy-pretty");
-			var text = pretty.checked ? Json.stringify(json, null, "\t") : Json.stringify(json);
-			Browser.navigator.clipboard.writeText(text);
-		});
-		document.getElementById("in-paste").addEventListener("paste", (e:ClipboardEvent) -> {
-			e.preventDefault();
-			var text = e.clipboardData.getData("text/plain");
+			return wantPretty && pretty.checked ? Json.stringify(json, null, "\t") : Json.stringify(json);
+		}
+		function setJSON(text:String) {
 			var json:DynamicAccess<Any> = Json.parse(text);
 			for (field in fieldsToSaveAndLoad) {
 				var value = json[field.id];
@@ -219,9 +217,66 @@ class Main {
 				}
 				(cast field:InputElement).value = value;
 			}
+		}
+		ShareButton.createSimple("JSON",
+			(then) -> then(getJSON(true)),
+			(snip) -> snip,
+			cast document.getElementById("in-copy")
+		);
+		/*document.getElementById("in-copy").addEventListener("click", (e) -> {
+			var text = getJSON(true);
+			function fallback() {
+				Browser.window.prompt("Here's your JSON:", getJSON(false));
+			}
+			try {
+				Browser.navigator.clipboard.writeText(text).catchError((_) -> {
+					fallback();
+				});
+			} catch (_) {
+				fallback();
+			}
+		});*/
+		document.getElementById("in-paste").addEventListener("paste", (e:ClipboardEvent) -> {
+			e.preventDefault();
+			var text = e.clipboardData.getData("text/plain");
+			setJSON(text);
 			update();
 			return false;
 		});
+		//
+		ShareButton.create(
+			() -> getJSON(false),
+			(type, text) -> {
+				var base = (Browser.location.hostname != "localhost"
+					? 'https://yal.cc/game-tools/pf2e/roll/'
+					: Browser.location.origin + Browser.location.pathname
+				);
+				return '$base?params-$type=$text';
+			},
+			cast document.getElementById("in-share")
+		);
+		{ // params
+			var params = new URLSearchParams(Browser.location.search);
+			var p:String;
+			function then(str) {
+				Console.log("Loading", str);
+				setJSON(str);
+				if (inUseEfficiency.checked) {
+					HtmlTools.find("fs-multi", InputElement).classList.remove("hide");
+				}
+				if (inMultiHit.checked) {
+					HtmlTools.find("fs-multi", InputElement).classList.remove("hide");
+				}
+				update();
+			}
+			if ((p = params.get("params-e")) != null) {
+				ShareButton.decode("e", p, then);
+			} else if ((p = params.get("params-b")) != null) {
+				ShareButton.decode("b", p, then);
+			} else if ((p = params.get("params-c")) != null) {
+				ShareButton.decode("c", p, then);
+			}
+		};
 		//
 		update();
 	}
