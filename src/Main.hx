@@ -80,8 +80,12 @@ class Main {
 				var range = txr.TxrProgram.eval(input.value);
 				if (range == null) {
 					input.classList.add("error");
+					input.title = "Error: " + txr.TxrProgram.evalError;
 					range = Range.fromNumber(0);
-				} else input.classList.remove("error");
+				} else {
+					input.classList.remove("error");
+					input.title = "Range: " + range.toStringAvg();
+				}
 				if (!useRanges) range = Range.fromNumber(range.avg);
 				q.efficiencies[i + 1] = range;
 			}
