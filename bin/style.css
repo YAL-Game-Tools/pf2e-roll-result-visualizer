@@ -30,7 +30,7 @@ main div.table {
 main .table .checkbox {
 	text-align: right;
 }
-main h1 {
+main > h1 {
 	margin: 0;
 	transform: skewX(-5deg);
 }

@@ -266,7 +266,7 @@ class Main {
 				Console.log("Loading", str);
 				setJSON(str);
 				if (inUseEfficiency.checked) {
-					HtmlTools.find("fs-multi", InputElement).classList.remove("hide");
+					HtmlTools.find("fs-efficiency", InputElement).classList.remove("hide");
 				}
 				if (inMultiHit.checked) {
 					HtmlTools.find("fs-multi", InputElement).classList.remove("hide");

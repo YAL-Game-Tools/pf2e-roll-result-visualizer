@@ -131,65 +131,6 @@ class ShareButton {
 		}, (pair) -> {
 			return getURL(pair.type, pair.text);
 		}, button);
-		/*var label = "Share";
-		var labelCopied = "Copied!";
-		if (button == null) {
-			button = Browser.document.createInputElement();
-			button.classList.add("share");
-			button.type = "button";
-			button.value = label;
-		} else label = button.value;
-		var revertTimeout:Null<Int> = null;
-		function blink() {
-			if (revertTimeout != null) Browser.window.clearTimeout(revertTimeout);
-			button.value = labelCopied;
-			revertTimeout = Browser.window.setTimeout(() -> {
-				button.value = label;
-			}, 1300);
-		}
-		button.addEventListener("click", (e) -> {
-			var text = getText();
-			var simple:String = (cast window).encodeURIComponent(text);
-			var base64 = window.btoa(text);
-			var bestType = "e", bestText = simple;
-			if (base64.length < bestText.length) {
-				bestType = "b";
-				bestText = base64;
-			}
-			function fin() {
-				var shareURL = getURL(bestType, bestText);
-				function fallback() {
-					window.prompt("Here's your share URL:", shareURL);
-				}
-				try {
-					Browser.navigator.clipboard.writeText(shareURL).then((_) -> {
-						blink();
-					}).catchError((x) -> {
-						Console.error("Failed to copy:", x);
-						fallback();
-					});
-				} catch (x:Dynamic) {
-					Console.error("Failed to copy:", x);
-					fallback();
-				}
-			}
-			try {
-				StringGZ.compress(text).then((bytes) -> {
-					var bb64 = window.btoa(bytesToBinString(bytes));
-					if (bb64.length < bestText.length) {
-						bestType = "c";
-						bestText = bb64;
-					}
-					fin();
-				}).catchError((x) -> {
-					Console.error("Compression error", x);
-					fin();
-				});
-			} catch (x:Dynamic) {
-				Console.error("Compression error", x);
-			}
-		});
-		return button;*/
 	}
 }
 
