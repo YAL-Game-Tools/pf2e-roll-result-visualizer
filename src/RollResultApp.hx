@@ -12,11 +12,8 @@ import js.html.Console;
 import js.Browser;
 import js.Browser.document;
 import js.html.InputElement;
-using HtmlTools;
-// https://evanhahn.com/javascript-compression-streams-api-with-strings
-// https://github.com/basro/hx-jsasync
 
-class Main {
+class RollResultApp {
 	static var tables:Array<RollTable> = [];
 	static var inBonus:InputElement = findInput("in-bonus");
 	static var inDC:InputElement = findInput("in-dc");

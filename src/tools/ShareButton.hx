@@ -1,3 +1,4 @@
+package tools;
 import js.html.Console;
 import js.Browser;
 import js.Browser.window;

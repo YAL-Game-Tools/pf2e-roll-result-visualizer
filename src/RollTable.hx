@@ -9,7 +9,6 @@ import js.html.FieldSetElement;
 import js.Browser.document;
 import js.html.TableCellElement;
 import js.html.Element;
-using HtmlTools;
 
 class RollTable {
 	public var element:FieldSetElement;

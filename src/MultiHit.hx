@@ -4,7 +4,6 @@ import js.Browser;
 import js.Browser.document;
 import js.html.Element;
 import RollTable;
-using HtmlTools;
 
 class MultiHit {
 	static var element:Element = document.getElementById("multi-out");

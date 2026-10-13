@@ -1,3 +1,4 @@
+package tools;
 import haxe.io.Path;
 import haxe.macro.Context;
 import haxe.macro.Compiler;

@@ -10,6 +10,6 @@ A tool by [YellowAfterlife](https://yal.cc/), written in [Haxe](https://haxe.org
 
 Install Haxe (see above);
 ```
-haxe build.hxml
+haxe build-roll.hxml
 ```
 If all is well, a new `script.js` should manifest in the `bin/` directory.

@@ -1,3 +1,4 @@
+package tools;
 import js.html.FieldSetElement;
 import js.html.Element;
 import js.Browser;

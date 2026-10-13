@@ -1,0 +1,5 @@
+--class-path src
+--main RollResultApp
+--js bin/roll/script.js
+--dce full
+--macro tools.UpdatePHP.run()
