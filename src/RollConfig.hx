@@ -6,8 +6,12 @@ class RollConfig {
 	public var rollTable = false;
 	public var keenFlair = false;
 	public var firstEfficiency:Range = null;
+	public var formulas:StageArray<String> = null;
 	public var efficiencies:StageArray<Range> = null;
+	public var successUpgrade = false;
+	public var nat1Downgrade = true;
 	public var forcefulEfficiency = 0.;
+	public var assurance:Null<Int> = null;
 	public var flatChecks = [];
 	public function new() {
 		

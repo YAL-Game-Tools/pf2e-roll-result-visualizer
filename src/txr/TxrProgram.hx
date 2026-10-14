@@ -64,6 +64,7 @@ class TxrProgram {
 						case TxrUnOp.Not: v = v != 0 ? 0 : 1;
 						case TxrUnOp.Negate: v = -v;
 					}
+					stack.add(v);
 				};
 			}
 		}

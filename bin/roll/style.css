@@ -68,6 +68,9 @@ fieldset.hide {
 fieldset legend {
 	cursor: default;
 }
+fieldset > label {
+	display: block;
+}
 fieldset:not(.hide) > legend:before {
 	content: "▽ "; /* + */
 }

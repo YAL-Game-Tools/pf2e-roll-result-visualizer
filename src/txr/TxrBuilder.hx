@@ -102,7 +102,7 @@ class TxrBuilder {
 					skip();
 					ops(tk);
 				};
-				case ParOpen(p) if (node.match(Number(_, _))): { // implicit `2(x)` -> `2*(x)`
+				case ParOpen(p) if (node.match(Number(_, _) | UnOp(_, Negate, _))): { // implicit `2(x)` -> `2*(x)`
 					ops(Op(p, Mul));
 				};
 				default:

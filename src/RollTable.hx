@@ -80,10 +80,10 @@ class RollTable {
 		document.getElementById("results").append(table.element);
 		return table;
 	}
-	public function update(bonus:Int, dc:Int, q:RollConfig, attempt:Int) {
+	public function update(bonus:Int, dc:Int, q:RollConfig, attempt:Int, ?label:String) {
 		var chances = new StageArray(0.);
 		function getStage(i:Int) {
-			var r = i + bonus;
+			var r = q.assurance ?? (i + bonus);
 			var stage = if (r >= dc + 10) {
 				Stage.CritSuccess;
 			} else if (r >= dc) {
@@ -94,8 +94,12 @@ class RollTable {
 				Stage.CritFailure;
 			}
 			// nat
-			if ((i == 20 || q.keenFlair && i == 19) && stage != CritSuccess) stage++;
-			if (i == 1 && stage != CritFailure) stage--;
+			if (q.assurance == null) {
+				if ((i == 20 || q.keenFlair && i == 19) && stage != CritSuccess) stage++;
+				if (i == 1 && stage != CritFailure && q.nat1Downgrade) stage--;
+			}
+			//
+			if (q.successUpgrade && stage == Stage.Success) stage = Stage.CritSuccess;
 			return stage;
 		}
 		var keepHigher = q.rollMode == KeepHigher;
@@ -207,6 +211,9 @@ class RollTable {
 				if (valueStr != null) text += '\n$valueStr';
 				//
 				var fullLines = [];
+				if (q.formulas != null) {
+					fullLines.push("Formula: " + q.formulas[i]);
+				}
 				if (efficiencies != null) {
 					fullLines.push("Efficiency: " + efficiencies[i].toStringAvg());
 				}
@@ -242,9 +249,7 @@ class RollTable {
 		}
 		//
 		var title = 'Result';
-		if (bonus >= 0) {
-			title += ' (+$bonus)';
-		} else title += ' ($bonus)';
+		title += " (" + (label ?? (bonus >= 0 ? "+" + bonus : "" + bonus)) + ")";
 		var total = new Range(0, 0);
 		if (efficiencies != null) {
 			for (i in 0 ... Stage.Count) {
@@ -258,7 +263,18 @@ class RollTable {
 			'any failure: ${(chances.getAnyFailure()).toFixed2()}%',
 		];
 		if (q.efficiencies != null) {
-			var efficiencyNote = 'efficiency: ' + total.toStringAvg();
+			var term = (
+				#if medicine
+					"healing"
+				#else
+					"efficiency"
+				#end
+			);
+			var totalStr = total.toStringAvg();
+			#if medicine
+			if (total.isPoint()) totalStr += " avg";
+			#end
+			var efficiencyNote = '$term: $totalStr';
 			if (q.firstEfficiency != null) {
 				var factor = (total.avg / q.firstEfficiency.avg * 100).toFixed2();
 				efficiencyNote += ' ($factor%)';

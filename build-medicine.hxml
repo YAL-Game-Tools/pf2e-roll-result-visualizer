@@ -1,0 +1,6 @@
+--class-path src
+--main MedicineApp
+--js bin/medicine/script.js
+--dce full
+--macro tools.UpdatePHP.run()
+-D medicine

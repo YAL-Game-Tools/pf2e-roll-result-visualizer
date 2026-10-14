@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html><head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width" />
+	<title>YAL's PF2e medicine calculator</title>
+	<meta property="og:title" content="YAL's PF2e medicine calculator" />
+	<meta property="og:description" content='Shows how good each Treat Wounds / Battle Medicine DC is based on your circumstances!' />
+	<link rel="stylesheet" href="../roll/style.css?v=AUTO_DATE"/>
+	<link rel="stylesheet" href="../roll/night.css?v=AUTO_DATE"/>
+	<script defer="" src="https://cloud.umami.is/script.js" data-website-id="5e27083a-c054-4136-9592-b43ac60a5e84"></script>
+</head><body>
+	<main>
+		<input id="night" type="checkbox"/>
+		<label for="night"></label>
+		<h1>YAL's PF2e medicine calculator</h1>
+		<script>(function() {
+			var key = "medicine-vis-night";
+			var cb = document.getElementById("night");
+			var value = null;
+			try {
+				value = localStorage.getItem(key) == "1";
+			} catch (_) {}
+			if (value == null) {
+				value = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			}
+			function sync() {
+				if (cb.checked) document.body.classList.add("night"); else document.body.classList.remove("night");
+			}
+			cb.checked = value;
+			cb.onchange = function() {
+				sync();
+				try {
+					localStorage.setItem(key, cb.checked ? "1" : "0");
+				} catch (_) {}
+			};
+			sync();
+		})()</script>
+		
+		<div style="display: flex; margin-bottom: 0.3em; gap: 0.25em" id="in-notes-div">
+			<input id="in-notes" type="text" placeholder="Label/notes for screenshots" style="flex-grow: 1"/>
+			<input type="button" value="share" id="in-share" title="Copy a link to this setup" />
+			<input type="button" value="copy" id="in-copy" title="Copy this setup as JSON" />
+			<input type="checkbox" id="in-copy-pretty" title="Pretty-print JSON" />
+			<input type="text" id="in-paste" placeholder="paste here" style="width: 5em" title="Paste earlier copied JSON here"/>
+		</div>
+		<div class="table" id="in-main">
+			<div>
+				<input id="in-bonus" type="number" value="14"/>
+			</div><div title="With all your modifiers!">
+				Bonus
+			</div>
+			<div>
+				<select id="in-roll-mode">
+					<option selected value="1">Roll once</option>
+					<option value="2kh">Keep Higher</option>
+					<option value="2kl">Keep Lower</option>
+					<!-- <option value="followup">Follow-up Strike</option> -->
+				</select>
+			</div><div title="For fortune/misfortune, Sure Strike, Devise a Stratagem tricks, etc.">
+				Roll mode
+			</div>
+		</div>
+		
+		<fieldset id="fs-bonus">
+			<legend>Specials</legend>
+			<label>
+				<input id="in-godless-healing" type="checkbox"/>
+				Target has the
+				<a href="https://2e.aonprd.com/Feats.aspx?ID=8888" target="_blank">Godless Healing</a>
+				skill feat
+			</label>
+			<label>
+				<input id="in-robust-health" type="checkbox" />
+				Target has the
+				<a href="https://2e.aonprd.com/Feats.aspx?ID=6499" target="_blank">Robust Health</a>
+				general feat and is level
+				<input id="in-robust-health-level" type="number" value="1" style="width: 3em" />
+			</label>
+			<label>
+				<input id="in-medic" type="checkbox" />
+				You have the
+				<a href="https://2e.aonprd.com/Archetypes.aspx?ID=257">Medic</a>
+				archetype
+			</label>
+			<label>
+				<input id="in-magic-hands" type="checkbox" />
+				You have the
+				<a href="https://2e.aonprd.com/Feats.aspx?ID=4664">Magic Hands</a>
+				Cleric feat
+			</label>
+			<label>
+				<input id="in-mortal-healing" type="checkbox" />
+				You have the
+				<a href="https://2e.aonprd.com/Feats.aspx?ID=8889">Mortal Healing</a>
+				skill feat
+			</label>
+			<label>
+				<input id="in-risky-surgery" type="checkbox" />
+				You are using the
+				<a href="https://2e.aonprd.com/Feats.aspx?ID=6498">Risky Surgery</a>
+				skill feat
+			</label>
+			<label>
+				<input id="in-forensic-medicine" type="checkbox" />
+				You are a
+				<a href="https://2e.aonprd.com/Methodologies.aspx?ID=7">Forensic Medicine</a>
+				Investigator and are level
+				<input id="in-forensic-medicine-level" type="number" value="1" style="width: 3em" />
+			</label>
+			<label>
+				<input id="in-ageless-patience" type="checkbox" />
+				You are using
+				<a href="https://2e.aonprd.com/Feats.aspx?ID=6498">Ageless Patience</a>
+				(nat1 doesn't downgrade)
+			</label>
+			<label>
+				<input id="in-assurance" type="checkbox" />
+				You are using
+				<a href="https://2e.aonprd.com/Feats.aspx?ID=5121">Assurance</a>
+				with flat result of
+				<input id="in-assurance-roll" type="number" value="20" style="width: 3em" />
+			</label>
+		</fieldset>
+		
+		<fieldset class="hide" id="fs-rare">
+			<legend>Rarer options</legend>
+			<div class="table" id="in-rarer">
+				<div class="checkbox">
+					<input id="in-roll-table" type="checkbox" disabled/>
+				</div><div>
+					Show 2d roll table
+				</div>
+				<div>
+					<input id="in-flat-checks" type="text" placeholder="6, 5" autocomplete="off"/>
+				</div><div title="Like 5 if your dearest friend is Concealed">
+					Flat checks
+				</div>
+			</div>
+		</fieldset>
+		
+		<fieldset class="hide" id="fs-efficiency">
+			<legend>Efficiency</legend>
+			<div class="table" id="in-efficiency">
+				<div>
+					<input type="text" id="in-efficiency-0" value="-1d8"/>
+				</div><div>
+					Critical failure
+				</div>
+				<div>
+					<input type="text" id="in-efficiency-1" value="0"/>
+				</div><div>
+					Failure
+				</div>
+				<div>
+					<input type="text" id="in-efficiency-2" value="2d8"/>
+				</div><div>
+					Success
+				</div>
+				<div>
+					<input type="text" id="in-efficiency-3" value="4d8"/>
+				</div><div>
+					Critical success
+				</div>
+				<div class="checkbox">
+					<input id="in-efficiency-ranges" type="checkbox">
+				</div><div title="Shows chance-adjusted efficiency ranges if you use formulas like 1d8+4. A little confusing as a concept.">
+					Show ranges
+				</div>
+			</div>
+		</fieldset>
+		
+		<div id="results"></div>
+		
+		<fieldset>
+			<legend>About this tool</legend>
+			<p>
+				Can you tell on a glance whether you should roll DC 15 or DC 20 Battle Medicine?
+				What if the target has Robust Health?
+				What if you also have the Medic archetype?
+				And what about Assurance?
+				This little calculator aims to answer many such questions by showing you how likely any given DC is to succeed and what average healing would be.
+			</p><p>
+				See <a href="https://2e.aonprd.com/Rules.aspx?ID=2278">AoN</a> for full rules.
+			</p><p>
+				A tool by <a href="https://yal.cc/">YellowAfterlife</a>, written in <a href="https://haxe.org">Haxe</a> (<a href="https://github.com/YAL-Game-Tools/pf2e-roll-result-visualizer">source code</a>).
+			</p><p>
+				I have <a href="https://yal.cc/game-tools/pf2e/">other pf2e tools</a> too!
+			</p>
+		</fieldset>
+		
+		<script src="../roll/StringGZ.js"></script>
+		<script src="script.js?v=AUTO_DATE"></script>
+	</main>
+</body></html>
