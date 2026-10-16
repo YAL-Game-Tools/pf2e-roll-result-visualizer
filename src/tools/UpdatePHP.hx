@@ -10,7 +10,7 @@ class UpdatePHP {
 	public static macro function run():Void {
 		Context.onAfterGenerate(() -> {
 			var now = Date.now();
-			var nowStr = DateTools.format(Date.now(), "%F");
+			var nowStr = DateTools.format(Date.now(), "%F_%H-%M");
 			var dir = Path.directory(Compiler.getOutput());
 			var html = File.getContent(dir + "/index.html");
 			html = ~/\bAUTO_DATE\b/g.replace(html, nowStr);

@@ -35,6 +35,8 @@ class MedicineApp {
 	static var inForensicMedicine:InputElement = findInput("in-forensic-medicine");
 	static var inForensicMedicineLevel:InputElement = findInput("in-forensic-medicine-level");
 	static var inAgelessPatience:InputElement = findInput("in-ageless-patience");
+	static var inCircumstance:InputElement = findInput("in-circumstance");
+	static var inCircumstanceBonus:InputElement = findInput("in-circumstance-bonus");
 	static var inAssurance:InputElement = findInput("in-assurance");
 	static var inAssuranceRoll:InputElement = findInput("in-assurance-roll");
 	//
@@ -54,6 +56,18 @@ class MedicineApp {
 	}
 	public static function update() {
 		var bonus = Std.parseInt(inBonus.value);
+		//
+		var circ = 0;
+		if ((inRiskySurgery.checked || inAgelessPatience.checked) && circ < 2) circ = 2;
+		if (inCircumstance.checked) {
+			var cb = Std.parseInt(inCircumstanceBonus.value);
+			if (cb == null) {
+				//
+			} else if (cb > 0) {
+				if (circ < cb) circ = cb;
+			} else circ -= cb;
+		}
+		bonus += circ;
 		//
 		var q = new RollConfig();
 		q.rollMode = switch (inRollMode.value) {
@@ -79,11 +93,6 @@ class MedicineApp {
 			{ name: "Master", dc: 30, bonus: 30 },
 			{ name: "Legendary", dc: 40, bonus: 50 },
 		];
-		if (inMedic.checked) {
-			options[1].bonus += 5;
-			options[2].bonus += 10;
-			options[3].bonus += 15;
-		}
 		//
 		var chancesPerAttempt = [];
 		var efficiencyTotal = new Range(0, 0);
@@ -107,8 +116,24 @@ class MedicineApp {
 					if (inMagicHands.checked) formula = (cast formula).replace(rxD8, "d10");
 					if (option.bonus > 0) formula += " + " + option.bonus;
 					if (inGodlessHealing.checked) formula += " + 5";
-					if (inRobustHealth.checked) formula += " + " + inRobustHealthLevel.value;
 					if (inForensicMedicine.checked) formula += " + " + inForensicMedicineLevel.value;
+					// Medic/Robust Health are both circumstance bonuses...
+					var circHealing = 0;
+					if (inRobustHealth.checked) {
+						circHealing = Std.parseInt(inRobustHealthLevel.value) ?? 0;
+					}
+					if (inMedic.checked) {
+						var bonus = switch (attempt) {
+							case 1: 5;
+							case 2: 10;
+							case 3: 15;
+							default: 0;
+						}
+						if (circHealing < bonus) {
+							circHealing = bonus;
+						}
+					}
+					if (circHealing > 0) formula += " + " + circHealing;
 				}
 				if (inRiskySurgery.checked) formula += " - 1d8";
 				//
@@ -131,12 +156,6 @@ class MedicineApp {
 			chancesPerAttempt.push(result.chances);
 			efficiencyTotal += result.efficiency;
 		}
-		//
-		var efficiencyDiv = document.getElementById("efficiency-div");
-		if (q.efficiencies != null) {
-			var snip = efficiencyTotal.toStringAvg();
-			efficiencyDiv.style.display = "";
-		} else efficiencyDiv.style.display = "none";
 	}
 	public static function main() {
 		Console.log("Hello!");

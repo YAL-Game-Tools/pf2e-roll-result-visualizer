@@ -86,19 +86,19 @@
 				<input id="in-magic-hands" type="checkbox" />
 				You have the
 				<a href="https://2e.aonprd.com/Feats.aspx?ID=4664">Magic Hands</a>
-				Cleric feat
+				Cleric feat (d8➜d10)
 			</label>
 			<label>
 				<input id="in-mortal-healing" type="checkbox" />
 				You have the
 				<a href="https://2e.aonprd.com/Feats.aspx?ID=8889">Mortal Healing</a>
-				skill feat
+				skill feat (S➜CS*)
 			</label>
 			<label>
 				<input id="in-risky-surgery" type="checkbox" />
 				You are using the
 				<a href="https://2e.aonprd.com/Feats.aspx?ID=6498">Risky Surgery</a>
-				skill feat
+				skill feat (+2c, S➜CS)
 			</label>
 			<label>
 				<input id="in-forensic-medicine" type="checkbox" />
@@ -110,8 +110,13 @@
 			<label>
 				<input id="in-ageless-patience" type="checkbox" />
 				You are using
-				<a href="https://2e.aonprd.com/Feats.aspx?ID=6498">Ageless Patience</a>
-				(nat1 doesn't downgrade)
+				<a href="https://2e.aonprd.com/Feats.aspx?ID=4412">Ageless Patience</a>
+				(+2c, nat1 doesn't downgrade)
+			</label>
+			<label>
+				<input id="in-circumstance" type="checkbox" />
+				A different Circumstance bonus/penalty (Aid, etc.) of
+				<input id="in-circumstance-bonus" type="number" value="2" style="width: 3em" />
 			</label>
 			<label>
 				<input id="in-assurance" type="checkbox" />
@@ -139,7 +144,7 @@
 		</fieldset>
 		
 		<fieldset class="hide" id="fs-efficiency">
-			<legend>Efficiency</legend>
+			<legend>Formulas</legend>
 			<div class="table" id="in-efficiency">
 				<div>
 					<input type="text" id="in-efficiency-0" value="-1d8"/>
