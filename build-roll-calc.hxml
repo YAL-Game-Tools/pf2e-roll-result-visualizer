@@ -1,0 +1,6 @@
+--class-path src
+--main RollCalcApp
+--js bin/roll-calc/script.js
+--dce full
+--macro tools.UpdatePHP.run()
+-D roll_calc

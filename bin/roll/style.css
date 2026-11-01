@@ -61,24 +61,28 @@ main details > p:last-child {
 	margin-bottom: 0;
 }
 
-fieldset.hide {
-	opacity: 0.7;
-	padding-bottom: 0;
-}
-fieldset legend {
-	cursor: default;
-}
-fieldset > label {
-	display: block;
-}
-fieldset:not(.hide) > legend:before {
-	content: "▽ "; /* + */
-}
-fieldset.hide > legend:before {
-	content: "▷ "; /* − */
-}
-fieldset.hide > *:not(legend) {
-	display: none;
+main fieldset {
+	&.toggleable {
+		& > legend:before {
+			content: "▽ ";
+		}
+		&.hide > legend:before {
+			content: "▷ ";
+		}
+	}
+	&.hide {
+		opacity: 0.7;
+		padding-bottom: 0;
+		& > *:not(legend) {
+			display: none;
+		}
+	}
+	legend:not([contenteditable]) {
+		cursor: default;
+	}
+	& > label {
+		display: block;
+	}
 }
 #in-use-efficiency:not(:checked) ~ #in-efficiency {
 	display: none;

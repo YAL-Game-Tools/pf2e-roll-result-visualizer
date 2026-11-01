@@ -1,4 +1,7 @@
 package tools;
+import js.html.Node;
+import haxe.extern.EitherType;
+import haxe.extern.Rest;
 import js.html.FieldSetElement;
 import js.html.Element;
 import js.Browser;
@@ -17,6 +20,7 @@ class HtmlTools {
 		return toFixed2(n) + "%";
 	}
 	public static function makeFieldSetToggleable(q:FieldSetElement) {
+		q.classList.add("toggleable");
 		var legend = q.querySelector("& > legend");
 		legend.onclick = (e) -> {
 			if (q.classList.contains("hide")) {
@@ -24,6 +28,11 @@ class HtmlTools {
 			} else {
 				q.classList.add("hide");
 			}
+		}
+	}
+	public static function appendMixed(el:Element, values:Rest<EitherType<String, Node>>) {
+		for (item in values) {
+			el.append(item);
 		}
 	}
 }

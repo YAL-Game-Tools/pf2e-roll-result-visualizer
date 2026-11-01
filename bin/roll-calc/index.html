@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html><head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width" />
+	<title>YAL's PF2e roll calculator</title>
+	<meta property="og:title" content="YAL's PF2e roll calculator" />
+	<meta property="og:description" content='Shows min/max/average for damage/healing/etc formulas!' />
+	<link rel="stylesheet" href="../roll/style.css?v=AUTO_DATE"/>
+	<link rel="stylesheet" href="style.css?v=AUTO_DATE"/>
+	<link rel="stylesheet" href="../roll/night.css?v=AUTO_DATE"/>
+	<script defer="" src="https://cloud.umami.is/script.js" data-website-id="5e27083a-c054-4136-9592-b43ac60a5e84"></script>
+</head><body>
+	<main>
+		<input id="night" type="checkbox"/>
+		<label for="night"></label>
+		<h1>YAL's PF2e roll calculator</h1>
+		<script>(function() {
+			var key = "damage-calc-night";
+			var cb = document.getElementById("night");
+			var value = null;
+			try {
+				value = localStorage.getItem(key) == "1";
+			} catch (_) {}
+			if (value == null) {
+				value = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			}
+			function sync() {
+				if (cb.checked) document.body.classList.add("night"); else document.body.classList.remove("night");
+			}
+			cb.checked = value;
+			cb.onchange = function() {
+				sync();
+				try {
+					localStorage.setItem(key, cb.checked ? "1" : "0");
+				} catch (_) {}
+			};
+			sync();
+		})()</script>
+		<div style="display: flex; margin-bottom: 0.3em; gap: 0.25em" id="in-notes-div">
+			<input id="notes" type="text" placeholder="Label/notes for screenshots" style="flex-grow: 1"/>
+			<input type="button" value="share" id="share" title="Copy a link to this setup" />
+			<input type="button" value="copy" id="copy" title="Copy this setup as JSON" />
+			<input type="checkbox" id="copy-pretty" title="Pretty-print JSON" />
+			<input type="text" id="paste" placeholder="paste here" style="width: 5em" title="Paste earlier copied JSON here"/>
+		</div>
+		<div id="results"></div>
+		<div>
+			<input type="button" value="Add Another" id="add-line" />
+		</div>
+		
+		<script src="../roll/StringGZ.js"></script>
+		<script>window.hxGetSearchParams = () => {
+			let pairs = [];
+			let params = new URLSearchParams(location.search);
+			for (let [key, value] of params.entries()) {
+				pairs.push({ key, value });
+			}
+			return pairs;
+		}</script>
+		<script src="script.js?v=AUTO_DATE"></script>
+	</main>
+</body></html>

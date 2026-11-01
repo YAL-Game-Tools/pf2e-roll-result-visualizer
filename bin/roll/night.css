@@ -19,43 +19,41 @@ label[for="night"]:hover {
 }
 
 body.night {
-    background-color: #405070;
-    color: white;
-}
-body.night main {
-    background: #1A202D;
-}
-body.night main fieldset {
-    border-color: #516285;
-}
-body.night main input[type="number"],
-body.night main input[type="text"],
-body.night main select {
-    background: #0d1016;
-    color: white;
-}
-body.night main input[type="number"],
-body.night main input[type="text"],
-body.night main input[type="button"],
-body.night main select {
-	border: 1px solid #516285;
-}
-body.night main input[type="number"]:hover,
-body.night main input[type="text"]:hover,
-body.night main input[type="button"]:hover,
-body.night main select:hover {
-	border-color: #8399c7;
-}
-body.night main input[type="button"] {
-	background: #252e40;
-    color: white;
-}
-body.night main input[type="button"]:hover {
-	background: #354158 ;
-}
-body.night a {
-    color: #9DEC76;
-}
-body.night a:visited {
-    color: #7ef0ff;
+	background-color: #405070;
+	color: white;
+	main {
+		background: #1A202D;
+		fieldset {
+			border-color: #516285;
+		}
+		input[type="number"],
+		input[type="text"],
+		textarea,
+		select {
+			background: #0d1016;
+			color: white;
+		}
+		input[type="number"],
+		input[type="text"],
+		input[type="button"],
+		select {
+			border: 1px solid #516285;
+			&:hover {
+				border-color: #8399c7;
+			}
+		}
+		input[type="button"] {
+			background: #252e40;
+			color: white;
+		}
+		input[type="button"]:hover {
+			background: #354158;
+		}
+		a {
+			color: #9DEC76;
+		}
+		a:visited {
+			color: #7ef0ff;
+		}
+	}
 }
