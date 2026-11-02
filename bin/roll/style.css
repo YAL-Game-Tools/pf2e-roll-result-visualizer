@@ -40,7 +40,7 @@ main input.wide {
 	width: 100%;
 	box-sizing: border-box;
 }
-main input.error {
+main input.error, main textarea.error {
 	outline: 1px solid red;
 }
 main .table > div[title] {

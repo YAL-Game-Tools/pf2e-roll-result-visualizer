@@ -19,6 +19,14 @@ class TxrParser {
 			}
 			var d:TxrPos = start;
 			switch (c) {
+				case "#".code: {
+					while (pos < len) {
+						c = s.charCodeAt(pos++);
+						if (c == "\r".code || c == "\n".code) {
+							break;
+						}
+					}
+				}
 				case "(".code: out.push(ParOpen(d));
 				case ")".code: out.push(ParClose(d));
 				case "~".code: out.push(RangeOp(d));

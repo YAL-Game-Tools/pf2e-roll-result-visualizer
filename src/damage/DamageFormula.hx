@@ -95,9 +95,9 @@ class DamageFormula {
 		field.addEventListener("change", e -> {
 			update();
 		});
-		field.addEventListener("keydown", (e:KeyboardEvent) -> {
+		/*field.addEventListener("keydown", (e:KeyboardEvent) -> {
 			if (e.key == "Enter") update();
-		});
+		});*/
 	}
 	
 	public function setTo(q:DamageFormula) {
